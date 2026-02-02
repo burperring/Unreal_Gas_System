@@ -35,5 +35,3 @@ AGP_PlayerCharacter::AGP_PlayerCharacter()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	FollowCamera->bUsePawnControlRotation = false;
 }
-
-
