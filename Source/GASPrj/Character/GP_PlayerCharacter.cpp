@@ -1,10 +1,12 @@
 ﻿
 #include "GP_PlayerCharacter.h"
 
+#include "AbilitySystemComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "GASPrj/Player/GP_PlayerState.h"
 
 
 AGP_PlayerCharacter::AGP_PlayerCharacter()
@@ -34,4 +36,30 @@ AGP_PlayerCharacter::AGP_PlayerCharacter()
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	FollowCamera->bUsePawnControlRotation = false;
+}
+
+UAbilitySystemComponent* AGP_PlayerCharacter::GetAbilitySystemComponent() const
+{
+	AGP_PlayerState* GPPlayerState = Cast<AGP_PlayerState>(GetPlayerState());
+	if (GPPlayerState == nullptr) return nullptr;
+
+	return GPPlayerState->GetAbilitySystemComponent();
+}
+
+void AGP_PlayerCharacter::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+
+	if (!IsValid(GetAbilitySystemComponent())) return;
+
+	GetAbilitySystemComponent()->InitAbilityActorInfo(GetPlayerState(), this);
+}
+
+void AGP_PlayerCharacter::OnRep_PlayerState()
+{
+	Super::OnRep_PlayerState();
+
+	if (!IsValid(GetAbilitySystemComponent())) return;
+
+	GetAbilitySystemComponent()->InitAbilityActorInfo(GetPlayerState(), this);
 }
