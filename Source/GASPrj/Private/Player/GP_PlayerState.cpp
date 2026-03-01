@@ -1,5 +1,6 @@
 ﻿
-#include "GP_PlayerState.h"
+#include "GASPrj/Public/Player/GP_PlayerState.h"
+
 #include "AbilitySystemComponent.h"
 
 

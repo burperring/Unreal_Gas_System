@@ -1,8 +1,12 @@
 
-#include "GP_PlayerController.h"
+#include "GASPrj/Public/Player/GP_PlayerController.h"
+
+#include "AbilitySystemBlueprintLibrary.h"
+#include "AbilitySystemComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 #include "GameFramework/Character.h"
+#include "GameplayTags/GPTags.h"
 
 void AGP_PlayerController::SetupInputComponent()
 {
@@ -25,6 +29,8 @@ void AGP_PlayerController::SetupInputComponent()
 	EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ThisClass::Look);
 
 	EnhancedInputComponent->BindAction(PrimaryAction, ETriggerEvent::Started, this, &ThisClass::Primary);
+	EnhancedInputComponent->BindAction(SecondaryAction, ETriggerEvent::Started, this, &ThisClass::Secondary);
+	EnhancedInputComponent->BindAction(TertiaryAction, ETriggerEvent::Started, this, &ThisClass::Tertiary);
 }
 
 void AGP_PlayerController::Jump()
@@ -66,5 +72,25 @@ void AGP_PlayerController::Look(const FInputActionValue& Value)
 
 void AGP_PlayerController::Primary()
 {
-	UE_LOG(LogTemp, Display, TEXT("AGP_PlayerController::Primary"));
+	ActivateAbility(GPTags::GPAbilities::Primary);
+	// 아래와 같은 방식으로 선언해서 게임플레이 태그를 추가할 수 있다. 하드 코딩 선언 방식이므로 휴먼에러가 발생할 확률이 높다.
+	// FGameplayTag PrimaryTag = FGameplayTag::RequestGameplayTag("GPTags.GPAbilities.Primary");
+}
+
+void AGP_PlayerController::Secondary()
+{
+	ActivateAbility(GPTags::GPAbilities::Secondary);
+}
+
+void AGP_PlayerController::Tertiary()
+{
+	ActivateAbility(GPTags::GPAbilities::Tertiary);
+}
+
+void AGP_PlayerController::ActivateAbility(const FGameplayTag& AbilityTag) const
+{
+	UAbilitySystemComponent* ASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetPawn());
+	if (!IsValid(ASC)) return;
+
+	ASC->TryActivateAbilitiesByTag(AbilityTag.GetSingleTagContainer());
 }

@@ -1,12 +1,12 @@
 ﻿
-#include "GP_PlayerCharacter.h"
+#include "GASPrj/Public/Character/GP_PlayerCharacter.h"
 
 #include "AbilitySystemComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
-#include "GASPrj/Player/GP_PlayerState.h"
+#include "GASPrj/Public/Player/GP_PlayerState.h"
 
 
 AGP_PlayerCharacter::AGP_PlayerCharacter()
@@ -50,16 +50,17 @@ void AGP_PlayerCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
 
-	if (!IsValid(GetAbilitySystemComponent())) return;
+	if (GetAbilitySystemComponent() == nullptr || !HasAuthority()) return;
 
 	GetAbilitySystemComponent()->InitAbilityActorInfo(GetPlayerState(), this);
+	GiveStartupAbilities();
 }
 
 void AGP_PlayerCharacter::OnRep_PlayerState()
 {
 	Super::OnRep_PlayerState();
 
-	if (!IsValid(GetAbilitySystemComponent())) return;
+	if (GetAbilitySystemComponent() == nullptr) return;
 
 	GetAbilitySystemComponent()->InitAbilityActorInfo(GetPlayerState(), this);
 }

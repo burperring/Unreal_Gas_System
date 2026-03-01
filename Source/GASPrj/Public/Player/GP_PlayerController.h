@@ -6,9 +6,10 @@
 #include "GP_PlayerController.generated.h"
 
 
+struct FGameplayTag;
+struct FInputActionValue;
 class UInputMappingContext;
 class UInputAction;
-struct FInputActionValue;
 
 UCLASS()
 class GASPRJ_API AGP_PlayerController : public APlayerController
@@ -25,6 +26,9 @@ private:
 	void Look(const FInputActionValue& Value);
 
 	void Primary();
+	void Secondary();
+	void Tertiary();
+	void ActivateAbility(const FGameplayTag& AbilityTag) const;
 	
 	UPROPERTY(EditDefaultsOnly, Category = "GP|Input")
 	TArray<TObjectPtr<UInputMappingContext>> InputMappingContexts;
@@ -37,4 +41,8 @@ private:
 	TObjectPtr<UInputAction> MoveAction;
 	UPROPERTY(EditDefaultsOnly, Category = "GP|Input|Ability")
 	TObjectPtr<UInputAction> PrimaryAction;
+	UPROPERTY(EditDefaultsOnly, Category = "GP|Input|Ability")
+	TObjectPtr<UInputAction> SecondaryAction;
+	UPROPERTY(EditDefaultsOnly, Category = "GP|Input|Ability")
+	TObjectPtr<UInputAction> TertiaryAction;
 };

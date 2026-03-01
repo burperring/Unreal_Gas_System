@@ -1,5 +1,7 @@
 
-#include "GP_BaseCharacter.h"
+#include "GASPrj/Public/Character/GP_BaseCharacter.h"
+
+#include "AbilitySystemComponent.h"
 
 AGP_BaseCharacter::AGP_BaseCharacter()
 {
@@ -12,6 +14,17 @@ AGP_BaseCharacter::AGP_BaseCharacter()
 UAbilitySystemComponent* AGP_BaseCharacter::GetAbilitySystemComponent() const
 {
 	return nullptr;
+}
+
+void AGP_BaseCharacter::GiveStartupAbilities()
+{
+	if (GetAbilitySystemComponent() == nullptr) return;
+	
+	for (const auto& Ability : StartupAbilities)
+	{
+		FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(Ability);
+		GetAbilitySystemComponent()->GiveAbility(AbilitySpec);
+	}
 }
 
 
