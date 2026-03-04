@@ -7,7 +7,7 @@
 #include "GP_PlayerState.generated.h"
 
 
-class UAbilitySystemComponent;
+class UGP_AbilitySystemComponent;
 
 UCLASS()
 class GASPRJ_API AGP_PlayerState : public APlayerState, public IAbilitySystemInterface
@@ -21,5 +21,5 @@ public:
 	
 private:
 	UPROPERTY(VisibleAnywhere, Category = "GP|Ability")
-	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
+	TObjectPtr<UGP_AbilitySystemComponent> AbilitySystemComponent;
 };

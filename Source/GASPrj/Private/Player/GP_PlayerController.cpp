@@ -72,19 +72,19 @@ void AGP_PlayerController::Look(const FInputActionValue& Value)
 
 void AGP_PlayerController::Primary()
 {
-	ActivateAbility(GPTags::GPAbilities::Primary);
+	ActivateAbility(GPTags::GPAbilities::Player::Primary);
 	// 아래와 같은 방식으로 선언해서 게임플레이 태그를 추가할 수 있다. 하드 코딩 선언 방식이므로 휴먼에러가 발생할 확률이 높다.
 	// FGameplayTag PrimaryTag = FGameplayTag::RequestGameplayTag("GPTags.GPAbilities.Primary");
 }
 
 void AGP_PlayerController::Secondary()
 {
-	ActivateAbility(GPTags::GPAbilities::Secondary);
+	ActivateAbility(GPTags::GPAbilities::Player::Secondary);
 }
 
 void AGP_PlayerController::Tertiary()
 {
-	ActivateAbility(GPTags::GPAbilities::Tertiary);
+	ActivateAbility(GPTags::GPAbilities::Player::Tertiary);
 }
 
 void AGP_PlayerController::ActivateAbility(const FGameplayTag& AbilityTag) const
