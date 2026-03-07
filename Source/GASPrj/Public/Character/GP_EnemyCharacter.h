@@ -23,5 +23,5 @@ protected:
 
 private:
 	UPROPERTY(VisibleAnywhere, Category = "GP|AbilitySystem")
-	TObjectPtr<UGP_AbilitySystemComponent> AbilitySystemComponent;
+	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
 };

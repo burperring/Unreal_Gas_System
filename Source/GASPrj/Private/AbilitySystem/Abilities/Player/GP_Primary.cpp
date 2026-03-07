@@ -1,6 +1,7 @@
 ﻿
 #include "AbilitySystem/Abilities/Player/GP_Primary.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
 #include "Engine/OverlapResult.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
@@ -30,7 +31,7 @@ void UGP_Primary::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
 	if (bDrawDebugs)
-		UKismetSystemLibrary::PrintString(GetWorld(), TEXT("Primary Active"), true, true, FLinearColor(0.0f, 0.66f, 1.0f, 1.0f), 2.0f);
+		GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Cyan, TEXT("Primary Active!"));
 
 	PlayMontageFlipFlop();
 
@@ -43,7 +44,7 @@ void UGP_Primary::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGam
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 
 	if (bDrawDebugs)
-		UKismetSystemLibrary::PrintString(GetWorld(), TEXT("Primary End"), true, true, FLinearColor(0.0f, 0.66f, 1.0f, 1.0f), 2.0f);
+		GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Cyan, TEXT("Primary End!"));
 }
 
 void UGP_Primary::OnMontageCompleted()
@@ -70,7 +71,9 @@ void UGP_Primary::OnEventReceived(FGameplayEventData Payload)
 {
 	// 여기서 특정 어빌리티 능력에 대한 대기 이벤트를 실행시켜 준다.
 	// 여기서 Payload 데이터에 접근할 수 있다.
-	UE_LOG(LogTemp, Warning, TEXT("Gameplay Event Received! Tag: %s"), *Payload.EventTag.ToString());
+	if (bDrawDebugs)
+		GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Cyan, TEXT("Gameplay Primary Event Received!"));
+
 	HitBoxOerlapTest();
 }
 
@@ -96,19 +99,43 @@ void UGP_Primary::HitBoxOerlapTest()
 	GetWorld()->OverlapMultiByChannel(OverlapResults, HitBoxLocation,
 		FQuat::Identity, ECC_Visibility, Sphere, CollisionParams, ResponseParams);
 
+	TArray<AActor*> OverlapActors;
+	for (const FOverlapResult& Result : OverlapResults)
+	{
+		if (!IsValid(Result.GetActor())) continue;
+		OverlapActors.AddUnique(Result.GetActor());
+	}
+
+	SendHitReactEventToActors(OverlapActors);
+	
 	if (bDrawDebugs)
 	{
-		DrawDebugSphere(GetWorld(), HitBoxLocation, HitBoxRadius, 16, FColor::Red, false, 3.f);
+		DrawHitBoxOverlapDebugs(OverlapResults, HitBoxLocation);
+	}
+}
 
-		for (const FOverlapResult& Result : OverlapResults)
+void UGP_Primary::DrawHitBoxOverlapDebugs(const TArray<FOverlapResult>& OverlapResults, const FVector& HitBoxLocation) const
+{
+	DrawDebugSphere(GetWorld(), HitBoxLocation, HitBoxRadius, 16, FColor::White, false, 3.f);
+
+	for (const FOverlapResult& Result : OverlapResults)
+	{
+		if (IsValid(Result.GetActor()))
 		{
-			if (IsValid(Result.GetActor()))
-			{
-				FVector DebugLocation = Result.GetActor()->GetActorLocation();
-				DebugLocation.Z += 100.f;
-				DrawDebugSphere(GetWorld(), DebugLocation, 30.f, 10, FColor::Green, false, 3.f);
-			}
+			FVector DebugLocation = Result.GetActor()->GetActorLocation();
+			DebugLocation.Z += 100.f;
+			DrawDebugSphere(GetWorld(), DebugLocation, 30.f, 10, FColor::Green, false, 3.f);
 		}
+	}
+}
+
+void UGP_Primary::SendHitReactEventToActors(const TArray<AActor*>& HitActors) const
+{
+	for (AActor* HitActor : HitActors)
+	{
+		FGameplayEventData Payload;
+		Payload.Instigator = GetAvatarActorFromActorInfo();
+		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(HitActor, GPTags::Events::Enemy::HitReact, Payload);
 	}
 }
 
@@ -152,9 +179,9 @@ void UGP_Primary::WaitForGameplayEvent(FGameplayTag EventTag)
 	WaitTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(
 		this, 
 		EventTag, 
-		/* OptionalExternalTarget (ASC to listen on) */ nullptr, 
-		/* OnlyTriggerOnce */ true, 
-		/* OnlyMatchExact */ true
+		/* OptionalExternalTarget (ASC to listen on) */ nullptr,	// 다른 액터에서 발생하는 이벤트를 수신하도록 지정할 수 있다.
+		/* OnlyTriggerOnce */ true,									// 첫 번째 이벤트가 수신된 후 종료할지(true) 아니면 여러 이벤트를 계속 수신할 지(false)
+		/* OnlyMatchExact */ true									// 정확히 일치하는 태그만 이벤트를 트리거할지(true), 아니면 중첩된 태그도 트리거할지(false)
 	);
 
 	if (WaitTask)
