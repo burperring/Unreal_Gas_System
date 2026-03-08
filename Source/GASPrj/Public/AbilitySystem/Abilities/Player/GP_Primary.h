@@ -50,13 +50,13 @@ private:
 	void WaitForGameplayEvent(FGameplayTag EventTag);
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "GP|Montage", meta = (AllowPrivateAccess = "true"))
-	UAnimMontage* Montage_1;
+	TObjectPtr<UAnimMontage> Montage_1;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "GP|Montage", meta = (AllowPrivateAccess = "true"))
-	UAnimMontage* Montage_2;
+	TObjectPtr<UAnimMontage> Montage_2;
 	UPROPERTY()
-	UAbilityTask_PlayMontageAndWait* MontageTask;
+	TObjectPtr<UAbilityTask_PlayMontageAndWait> MontageTask;
 	UPROPERTY()
-	UAbilityTask_WaitGameplayEvent* WaitTask;
+	TObjectPtr<UAbilityTask_WaitGameplayEvent> WaitTask;
 	
 	UPROPERTY(EditDefaultsOnly, Category = "GP|Abilities")
 	float HitBoxRadius = 100.f;

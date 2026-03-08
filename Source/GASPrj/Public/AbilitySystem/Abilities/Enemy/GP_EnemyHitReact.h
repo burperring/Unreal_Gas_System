@@ -34,11 +34,11 @@ private:
 	void WaitForGameplayEvent(FGameplayTag EventTag);
 	
 	UPROPERTY()
-	UAbilityTask_WaitGameplayEvent* WaitTask;
+	TObjectPtr<UAbilityTask_WaitGameplayEvent> WaitTask;
 	UPROPERTY()
-	UAbilityTask_PlayMontageAndWait* MontageTask;
+	TObjectPtr<UAbilityTask_PlayMontageAndWait> MontageTask;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "GP|Montage", meta = (AllowPrivateAccess = "true"))
-	UAnimMontage* HitMontage;
+	TObjectPtr<UAnimMontage> HitMontage;
 
 	void CacheHitDirectionVectors(const AActor* Instigator);
 
