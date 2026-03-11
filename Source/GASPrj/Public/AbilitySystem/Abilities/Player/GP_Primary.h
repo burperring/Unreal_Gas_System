@@ -44,6 +44,7 @@ private:
 	void HitBoxOerlapTest();
 	void DrawHitBoxOverlapDebugs(const TArray<FOverlapResult>& OverlapResults, const FVector& HitBoxLocation) const;
 	void SendHitReactEventToActors(const TArray<AActor*>& HitActors) const;
+	void ApplyDamageEventToActors(const TArray<AActor*>& HitActors) const;
 	void PlayMontageFlipFlop();
 
 	UFUNCTION()
@@ -57,6 +58,8 @@ private:
 	TObjectPtr<UAbilityTask_PlayMontageAndWait> MontageTask;
 	UPROPERTY()
 	TObjectPtr<UAbilityTask_WaitGameplayEvent> WaitTask;
+	UPROPERTY(EditDefaultsOnly, Category = "GP|Effects")
+	TSubclassOf<UGameplayEffect> PlayerDamageEffect;
 	
 	UPROPERTY(EditDefaultsOnly, Category = "GP|Abilities")
 	float HitBoxRadius = 100.f;

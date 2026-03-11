@@ -2,10 +2,12 @@
 #include "AbilitySystem/Abilities/Player/GP_Primary.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
+#include "AbilitySystemComponent.h"
 #include "Engine/OverlapResult.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
+#include "Character/GP_BaseCharacter.h"
 #include "GameplayTags/GPTags.h"
 
 void UGP_Primary::BeginDestroy()
@@ -105,9 +107,10 @@ void UGP_Primary::HitBoxOerlapTest()
 		if (!IsValid(Result.GetActor())) continue;
 		OverlapActors.AddUnique(Result.GetActor());
 	}
-
-	SendHitReactEventToActors(OverlapActors);
 	
+	SendHitReactEventToActors(OverlapActors);
+	ApplyDamageEventToActors(OverlapActors);
+
 	if (bDrawDebugs)
 	{
 		DrawHitBoxOverlapDebugs(OverlapResults, HitBoxLocation);
@@ -136,6 +139,22 @@ void UGP_Primary::SendHitReactEventToActors(const TArray<AActor*>& HitActors) co
 		FGameplayEventData Payload;
 		Payload.Instigator = GetAvatarActorFromActorInfo();
 		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(HitActor, GPTags::Events::Enemy::HitReact, Payload);
+	}
+}
+
+void UGP_Primary::ApplyDamageEventToActors(const TArray<AActor*>& HitActors) const
+{
+	UAbilitySystemComponent* ASC = GetAbilitySystemComponentFromActorInfo();
+	if (!IsValid(ASC)) return;
+	
+	for (AActor* const OverlapActor : HitActors)
+	{
+		AGP_BaseCharacter* BaseCharacter = Cast<AGP_BaseCharacter>(OverlapActor);
+		if (BaseCharacter == nullptr) continue;
+		
+		FGameplayEffectContextHandle ContextHandle = ASC->MakeEffectContext();
+		FGameplayEffectSpecHandle SpecHandle = ASC->MakeOutgoingSpec(PlayerDamageEffect, GetAbilityLevel(), ContextHandle);
+		ASC->ApplyGameplayEffectSpecToTarget(*SpecHandle.Data.Get(), BaseCharacter->GetAbilitySystemComponent());
 	}
 }
 

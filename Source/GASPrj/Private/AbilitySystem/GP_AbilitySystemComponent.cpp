@@ -27,11 +27,33 @@ void UGP_AbilitySystemComponent::OnRep_ActivateAbilities()
 	// 이미 제거된 능력을 사용하려고 시도하는 것을 방지해야 한다.
 	FScopedAbilityListLock ActiveScopeLock(*this);
 
-	// 모든 능력을 순회하면서 해등 능력이 유효한지 확인하고 활성화를 시도한다.
+	// 모든 능력을 순회하면서 해당 능력이 유효한지 확인하고 활성화를 시도한다.
 	for (const FGameplayAbilitySpec& AbilitySpec : GetActivatableAbilities())
 	{
 		HandleAutoActivateAbility(AbilitySpec);
 	}
+}
+
+void UGP_AbilitySystemComponent::SetAbilityLevel(TSubclassOf<UGameplayAbility> AbilityClass, int32 Level)
+{
+	if (IsValid(GetAvatarActor()) && !GetAvatarActor()->HasAuthority()) return;
+
+	FGameplayAbilitySpec* AbilitySpec = FindAbilitySpecFromClass(AbilityClass);
+	if (AbilitySpec == nullptr) return;
+
+	AbilitySpec->Level = Level;
+	MarkAbilitySpecDirty(*AbilitySpec);
+}
+
+void UGP_AbilitySystemComponent::AddAbilityLevel(TSubclassOf<UGameplayAbility> AbilityClass, int32 Value)
+{
+	if (IsValid(GetAvatarActor()) && !GetAvatarActor()->HasAuthority()) return;
+
+	FGameplayAbilitySpec* AbilitySpec = FindAbilitySpecFromClass(AbilityClass);
+	if (AbilitySpec == nullptr) return;
+
+	AbilitySpec->Level += Value;
+	MarkAbilitySpecDirty(*AbilitySpec);
 }
 
 void UGP_AbilitySystemComponent::HandleAutoActivateAbility(const FGameplayAbilitySpec& AbilitySpec)

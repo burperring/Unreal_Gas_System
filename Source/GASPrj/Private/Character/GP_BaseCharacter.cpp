@@ -27,5 +27,14 @@ void AGP_BaseCharacter::GiveStartupAbilities()
 	}
 }
 
+void AGP_BaseCharacter::InitializeAttributes()
+{
+	checkf(IsValid(InitializeAttributesEffect), TEXT("InitializeAttributesEffect not set."));
 
-
+	UAbilitySystemComponent* ASC = GetAbilitySystemComponent();
+	if (!IsValid(ASC)) return;
+	
+	FGameplayEffectContextHandle ContextHandle = ASC->MakeEffectContext();
+	FGameplayEffectSpecHandle SpecHandle = ASC->MakeOutgoingSpec(InitializeAttributesEffect, 1.f, ContextHandle);
+	ASC->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get()); 
+}

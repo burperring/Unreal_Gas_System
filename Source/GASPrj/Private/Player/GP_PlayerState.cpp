@@ -3,6 +3,7 @@
 
 #include "AbilitySystemComponent.h"
 #include "AbilitySystem/GP_AbilitySystemComponent.h"
+#include "AbilitySystem/GP_AttributeSet.h"
 
 
 AGP_PlayerState::AGP_PlayerState()
@@ -12,6 +13,8 @@ AGP_PlayerState::AGP_PlayerState()
 	AbilitySystemComponent = CreateDefaultSubobject<UGP_AbilitySystemComponent>(TEXT("AbilitySystemComponent"));
 	AbilitySystemComponent->SetIsReplicated(true);
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Mixed);
+
+	AttributeSet = CreateDefaultSubobject<UGP_AttributeSet>(TEXT("AttributeSet"));
 }
 
 UAbilitySystemComponent* AGP_PlayerState::GetAbilitySystemComponent() const

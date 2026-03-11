@@ -6,6 +6,8 @@
 #include "GP_BaseCharacter.h"
 #include "GP_EnemyCharacter.generated.h"
 
+
+class UAttributeSet;
 class UGP_AbilitySystemComponent;
 
 UCLASS()
@@ -17,6 +19,7 @@ public:
 	AGP_EnemyCharacter();
 
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+	virtual UAttributeSet* GetAttributeSet() const override;
 
 protected:
 	virtual void BeginPlay() override;
@@ -24,4 +27,6 @@ protected:
 private:
 	UPROPERTY(VisibleAnywhere, Category = "GP|AbilitySystem")
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
+	UPROPERTY()
+	TObjectPtr<UAttributeSet> AttributeSet;
 };

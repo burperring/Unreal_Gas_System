@@ -85,9 +85,12 @@ void UGP_EnemyHitReact::WaitForGameplayEvent(FGameplayTag EventTag)
 
 void UGP_EnemyHitReact::CacheHitDirectionVectors(const AActor* Instigator)
 {
-	AvatarForwardVector = GetAvatarActorFromActorInfo()->GetActorForwardVector();
+	AActor* AvatarActor = GetAvatarActorFromActorInfo();
+	if (AvatarActor == nullptr) return;
+	
+	AvatarForwardVector = AvatarActor->GetActorForwardVector();
 
-	const FVector AvatarLocation = GetAvatarActorFromActorInfo()->GetActorLocation();
+	const FVector AvatarLocation = AvatarActor->GetActorLocation();
 	const FVector InstigatorLocation = Instigator->GetActorLocation();
 
 	ToInstigator = InstigatorLocation - AvatarLocation;
