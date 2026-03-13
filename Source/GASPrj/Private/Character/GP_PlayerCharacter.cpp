@@ -2,6 +2,7 @@
 #include "GASPrj/Public/Character/GP_PlayerCharacter.h"
 
 #include "AbilitySystemComponent.h"
+#include "AbilitySystem/GP_AttributeSet.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -71,6 +72,8 @@ void AGP_PlayerCharacter::PossessedBy(AController* NewController)
 	
 	GiveStartupAbilities();
 	InitializeAttributes();
+	
+	SetAttributeValueChange();
 }
 
 void AGP_PlayerCharacter::OnRep_PlayerState()
@@ -82,4 +85,7 @@ void AGP_PlayerCharacter::OnRep_PlayerState()
 
 	ASC->InitAbilityActorInfo(GetPlayerState(), this);
 	OnASCInitialized.Broadcast(ASC, GetAttributeSet());
+
+	// 체력 변경에 따른 사망 이벤트 서버 동기화 작업 진행
+	SetAttributeValueChange();
 }

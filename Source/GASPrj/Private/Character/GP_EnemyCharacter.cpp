@@ -4,6 +4,7 @@
 #include "AbilitySystemComponent.h"
 #include "AbilitySystem/GP_AbilitySystemComponent.h"
 #include "AbilitySystem/GP_AttributeSet.h"
+#include "GameplayTags/GPTags.h"
 
 
 AGP_EnemyCharacter::AGP_EnemyCharacter()
@@ -42,4 +43,14 @@ void AGP_EnemyCharacter::BeginPlay()
 
 	GiveStartupAbilities();
 	InitializeAttributes();
+	
+	SetAttributeValueChange();
+}
+
+void AGP_EnemyCharacter::HandleDeath()
+{
+	if (IsAlive())
+		ActivateAbility(GPTags::GPAbilities::Death);
+
+	Super::HandleDeath();
 }

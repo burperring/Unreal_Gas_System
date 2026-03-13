@@ -1,5 +1,9 @@
 ﻿
 #include "AbilitySystem/GP_AttributeSet.h"
+
+#include "AbilitySystemBlueprintLibrary.h"
+#include "GameplayEffectExtension.h"
+#include "GameplayTags/GPTags.h"
 #include "Net/UnrealNetwork.h"
 
 void UGP_AttributeSet::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
@@ -18,6 +22,16 @@ void UGP_AttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbac
 {
 	Super::PostGameplayEffectExecute(Data);
 
+	if (Data.EvaluatedData.Attribute == GetHealthAttribute() && GetHealth() <= 0.f)
+	{
+		// 이 효과를 발생시킨 주체(causer)에게 게임플레이 이벤트를 보낸다.
+		FGameplayEventData Payload;
+		Payload.Instigator = Data.Target.GetAvatarActor();
+		
+		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
+			Data.EffectSpec.GetEffectContext().GetInstigator(), GPTags::Events::KillScored, Payload);
+	}
+	
 	if (!bAttributeInitialized)
 	{
 		bAttributeInitialized = true;

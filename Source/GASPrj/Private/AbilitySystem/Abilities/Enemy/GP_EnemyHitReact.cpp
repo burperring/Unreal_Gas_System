@@ -1,9 +1,11 @@
 ﻿
 #include "AbilitySystem/Abilities/Enemy/GP_EnemyHitReact.h"
 
+#include "AbilitySystemComponent.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "AbilitySystem/Abilities/Player/GP_Primary.h"
+#include "Character/GP_BaseCharacter.h"
 #include "GameplayTags/GPTags.h"
 #include "Utils/GP_AbilitySystemBlueprintLibrary.h"
 
@@ -36,6 +38,8 @@ void UGP_EnemyHitReact::EndAbility(const FGameplayAbilitySpecHandle Handle, cons
 
 void UGP_EnemyHitReact::OnEventReceived(FGameplayEventData Payload)
 {
+	if (GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(GPTags::Status::Death)) return;
+	
 	CacheHitDirectionVectors(Payload.Instigator);
 
 	EHitDirection HitDirection = UGP_AbilitySystemBlueprintLibrary::GetHitDirection(AvatarForwardVector, ToInstigator);

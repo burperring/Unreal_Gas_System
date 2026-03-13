@@ -8,6 +8,7 @@ namespace GPTags
 	namespace GPAbilities
 	{
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(ActivateOnGiven);
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Death);
 		
 		namespace Player
 		{
@@ -24,6 +25,8 @@ namespace GPTags
 
 	namespace Events
 	{
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(KillScored);
+		
 		namespace Player
 		{
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(Primary);
@@ -33,5 +36,10 @@ namespace GPTags
 		{
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(HitReact);
 		}
+	}
+
+	namespace Status
+	{
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Death);
 	}
 }

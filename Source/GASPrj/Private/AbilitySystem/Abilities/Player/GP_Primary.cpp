@@ -178,10 +178,10 @@ void UGP_Primary::PlayMontageFlipFlop()
 
 	if (MontageTask)
 	{
-		MontageTask->OnCompleted.AddDynamic(this, &UGP_Primary::OnMontageCompleted);
-		MontageTask->OnBlendOut.AddDynamic(this, &UGP_Primary::OnMontageBlendOut);
-		MontageTask->OnInterrupted.AddDynamic(this, &UGP_Primary::OnMontageInterrupted);
-		MontageTask->OnCancelled.AddDynamic(this, &UGP_Primary::OnMontageCancelled);
+		MontageTask->OnCompleted.AddDynamic(this, &UGP_Primary::OnMontageCompleted);		// 애니메이션 몽타주가 정상적으로 종료되었을 때
+		MontageTask->OnBlendOut.AddDynamic(this, &UGP_Primary::OnMontageBlendOut);			// 애니메이션이 다음 애니메이션에 전환되는 타이밍 떄
+		MontageTask->OnInterrupted.AddDynamic(this, &UGP_Primary::OnMontageInterrupted);	// 몽타주가 중간에 강제로 종료되었을 때
+		MontageTask->OnCancelled.AddDynamic(this, &UGP_Primary::OnMontageCancelled);		// Ability 취소로 인해 몽타주가 취소된 경우
 
 		MontageTask->ReadyForActivation();
 	}

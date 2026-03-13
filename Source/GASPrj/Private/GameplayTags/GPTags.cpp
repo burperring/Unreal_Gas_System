@@ -6,6 +6,7 @@ namespace GPTags
 	namespace GPAbilities
 	{
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(ActivateOnGiven, "GPTags.GPAbilities.ActivateOnGiven", "Tag for the Abilities that should activate immediately once given")
+		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Death, "GPTags.GPAbilities.Death", "Tag for the Character Death")
 		
 		namespace Player
 		{
@@ -22,15 +23,22 @@ namespace GPTags
 
 	namespace Events
 	{
+		UE_DEFINE_GAMEPLAY_TAG_COMMENT(KillScored, "GPTags.Events.KillScored", "Tag for the KillScored Event");
+		
 		namespace Player
 		{
-			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Primary, "GPTags.Events.Player.Primary", "Tag for the Player Gameplay Primary Ability")
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Primary, "GPTags.Events.Player.Primary", "Tag for the Player Gameplay Primary Event")
 		}
 
 		namespace Enemy
 		{
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(HitReact, "GPTags.Events.Enemy.HitReact", "Tag for the Enemy HitReact Enemy")
 		}
+	}
+
+	namespace Status
+	{
+		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Death, "GPTags.Status.Death", "Set Death Status");
 	}
 }
 
