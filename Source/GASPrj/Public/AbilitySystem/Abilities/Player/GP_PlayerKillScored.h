@@ -14,6 +14,8 @@ class GASPRJ_API UGP_PlayerKillScored : public UGP_GameplayAbility
 	GENERATED_BODY()
 
 public:
+	UGP_PlayerKillScored();
+	
 	virtual void BeginDestroy() override;
 	
 protected:

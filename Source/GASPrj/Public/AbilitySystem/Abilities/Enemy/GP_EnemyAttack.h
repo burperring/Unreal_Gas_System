@@ -2,22 +2,20 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GP_GameplayAbility.h"
-#include "GP_Death.generated.h"
+#include "AbilitySystem/Abilities/GP_GameplayAbility.h"
+#include "GP_EnemyAttack.generated.h"
 
 
 class UAbilityTask_PlayMontageAndWait;
 
 UCLASS()
-class GASPRJ_API UGP_Death : public UGP_GameplayAbility
+class GASPRJ_API UGP_EnemyAttack : public UGP_GameplayAbility
 {
 	GENERATED_BODY()
 
 public:
-	UGP_Death();
-	
-	virtual void BeginDestroy() override;
-	
+	UGP_EnemyAttack();
+
 protected:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
 		const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
@@ -29,23 +27,25 @@ protected:
 	UFUNCTION()
 	void OnMontageCompleted();
 	UFUNCTION()
-	void OnMontageBlendOut();
-	UFUNCTION()
 	void OnMontageInterrupted();
 	UFUNCTION()
 	void OnMontageCancelled();
 	// ===================================================
-	
-private:
-	void PlayDeathMontage();
-	void ApplyDeathEffect() const;
-	void RespawnCharacter();
-	void ResetDeathCharacter() const;
 
+private:
+	void PlayEnemyAttackMontage();
+	void SpawnProjectile();
+	void SendEndAttackEventTag();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GP|Projectile", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<AActor> EnemyProjectile;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "GP|Montage", meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UAnimMontage> DeathMontage;
+	TArray<TObjectPtr<UAnimMontage>> AttackMontageArray;
 	UPROPERTY()
 	TObjectPtr<UAbilityTask_PlayMontageAndWait> MontageTask;
-	UPROPERTY(EditDefaultsOnly, Category = "GP|Effects")
-	TSubclassOf<UGameplayEffect> DeathEffect;		// GPTags::Status::Death
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GP|Projectile", meta = (AllowPrivateAccess = "true"))
+	FName MuzzleSocketName;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "GP|Type", meta = (AllowPrivateAccess = "true"))
+	bool bIsMelee = false;
 };

@@ -7,6 +7,11 @@
 #include "GP_BaseCharacter.generated.h"
 
 
+namespace GPTypeTags
+{
+	extern GASPRJ_API const FName Player;
+}
+
 struct FGameplayTag;
 struct FOnAttributeChangeData;
 class UAttributeSet;

@@ -15,6 +15,8 @@ class GASPRJ_API UGP_Primary : public UGP_GameplayAbility
 	GENERATED_BODY()
 
 public:
+	UGP_Primary();
+	
 	virtual void BeginDestroy() override;
 	
 protected:
@@ -62,7 +64,7 @@ private:
 	TSubclassOf<UGameplayEffect> PlayerDamageEffect;
 	
 	UPROPERTY(EditDefaultsOnly, Category = "GP|Abilities")
-	float HitBoxRadius = 100.f;
+	float HitBoxRadius = 150.f;
 	UPROPERTY(EditDefaultsOnly, Category = "GP|Abilities")
 	float HitBoxForwardOffset = 200.f;
 	UPROPERTY(EditDefaultsOnly, Category = "GP|Abilities")

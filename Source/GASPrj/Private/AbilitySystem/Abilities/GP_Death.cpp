@@ -8,6 +8,11 @@
 #include "GameplayTags/GPTags.h"
 
 
+UGP_Death::UGP_Death()
+{
+	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
+}
+
 void UGP_Death::BeginDestroy()
 {
 	Super::BeginDestroy();
@@ -93,7 +98,7 @@ void UGP_Death::PlayDeathMontage()
 
 void UGP_Death::ApplyDeathEffect() const
 {
-	// Gameplay Effect를 통한 Death Tag 생성
+	// Gameplay Effect를 통한 Death Tag 생성(GPTags::Status::Death)
 	checkf(IsValid(DeathEffect), TEXT("DeathEffect not set."));
 	if (!IsValid(DeathEffect)) return;
 	
@@ -107,11 +112,13 @@ void UGP_Death::ApplyDeathEffect() const
 
 void UGP_Death::RespawnCharacter()
 {
+	if (!GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(GPTags::Status::Death)) return;
+	
 	FGameplayTagContainer TagContainer;
 	TagContainer.AddTag(GPTags::Status::Death);
 	BP_RemoveGameplayEffectFromOwnerWithGrantedTags(TagContainer, 1);
-
-	ResetDeathCharacter();	
+	
+	ResetDeathCharacter();
 
 	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
 }

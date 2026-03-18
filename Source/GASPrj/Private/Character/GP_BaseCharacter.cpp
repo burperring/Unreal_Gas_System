@@ -6,6 +6,12 @@
 #include "AbilitySystem/GP_AttributeSet.h"
 #include "Net/UnrealNetwork.h"
 
+
+namespace GPTypeTags
+{
+	const FName Player = FName("Player");
+}
+
 AGP_BaseCharacter::AGP_BaseCharacter()
 {
 	PrimaryActorTick.bCanEverTick = false;

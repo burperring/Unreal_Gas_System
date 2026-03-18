@@ -10,6 +10,11 @@
 #include "Character/GP_BaseCharacter.h"
 #include "GameplayTags/GPTags.h"
 
+UGP_Primary::UGP_Primary()
+{
+	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
+}
+
 void UGP_Primary::BeginDestroy()
 {
 	Super::BeginDestroy();

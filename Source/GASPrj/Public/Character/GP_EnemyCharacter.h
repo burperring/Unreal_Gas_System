@@ -20,14 +20,37 @@ public:
 
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	virtual UAttributeSet* GetAttributeSet() const override;
+	void RotateToTarget(AActor* Target);
+
+	FORCEINLINE float GetEnemyAcceptanceRadius() const { return AcceptanceRadius; }
+	FORCEINLINE float GetEnemyMinAttackDelay() const { return MinAttackDelay; }
+	FORCEINLINE float GetEnemyMaxAttackDelay() const { return MaxAttackDelay; }
+	FORCEINLINE float GetTimerLength() const { return TimerLength; }
 
 protected:
 	virtual void BeginPlay() override;
 	virtual void HandleDeath() override;
 
 private:
+	void UpdateRotationToTarget();
+	void StopTimer();
+	
 	UPROPERTY(VisibleAnywhere, Category = "GP|AbilitySystem")
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
 	UPROPERTY()
 	TObjectPtr<UAttributeSet> AttributeSet;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "GP|AI", meta = (AllowPrivateAccess = "true"))
+	float AcceptanceRadius{500.f};
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "GP|AI", meta = (AllowPrivateAccess = "true"))
+	float MinAttackDelay{0.1f};
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "GP|AI", meta = (AllowPrivateAccess = "true"))
+	float MaxAttackDelay{0.5f};
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "GP|AI", meta = (AllowPrivateAccess = "true"))
+	float TimerLength{0.2f};
+	
+	// 회전을 제어할 타이머 핸들
+	FTimerHandle RotationTimerHandle;
+	FTimerHandle StopTimerHandle;
+	UPROPERTY()
+	AActor* CurrentTarget;
 };

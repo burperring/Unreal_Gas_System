@@ -3,6 +3,11 @@
 
 namespace GPTags
 {
+	namespace SetByCaller
+	{
+		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Projectile, "GPTags.SetByCaller.Projectile", "Tag for Set by Caller Magnitude for Projectiles")
+	}
+	
 	namespace GPAbilities
 	{
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(ActivateOnGiven, "GPTags.GPAbilities.ActivateOnGiven", "Tag for the Abilities that should activate immediately once given")
@@ -18,12 +23,13 @@ namespace GPTags
 		namespace Enemy
 		{
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(HitReact, "GPTags.GPAbilities.Enemy.HitReact", "Tag for the Enemy Hit React Ability")
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Attack, "GPTags.GPAbilities.Enemy.Attack", "Tag for the Enemy Attack Ability")
 		}
 	}
 
 	namespace Events
 	{
-		UE_DEFINE_GAMEPLAY_TAG_COMMENT(KillScored, "GPTags.Events.KillScored", "Tag for the KillScored Event");
+		UE_DEFINE_GAMEPLAY_TAG_COMMENT(KillScored, "GPTags.Events.KillScored", "Tag for the KillScored Event")
 		
 		namespace Player
 		{
@@ -32,13 +38,15 @@ namespace GPTags
 
 		namespace Enemy
 		{
-			UE_DEFINE_GAMEPLAY_TAG_COMMENT(HitReact, "GPTags.Events.Enemy.HitReact", "Tag for the Enemy HitReact Enemy")
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(HitReact, "GPTags.Events.Enemy.HitReact", "Tag for the Enemy HitReact")
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(EndAttack, "GPTags.Events.Enemy.EndAttack", "Tag for the Enemy EndAttack")
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(MeleeTraceHit, "GPTags.Events.Enemy.MeleeTraceHit", "Tag for the Enemy Melee Trace Hit")
 		}
 	}
 
 	namespace Status
 	{
-		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Death, "GPTags.Status.Death", "Set Death Status");
+		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Death, "GPTags.Status.Death", "Set Death Status")
 	}
 }
 

@@ -9,6 +9,12 @@
 #include "GameplayTags/GPTags.h"
 #include "Utils/GP_AbilitySystemBlueprintLibrary.h"
 
+UGP_EnemyHitReact::UGP_EnemyHitReact()
+{
+	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
+	NetExecutionPolicy = EGameplayAbilityNetExecutionPolicy::ServerInitiated;
+}
+
 void UGP_EnemyHitReact::BeginDestroy()
 {
 	Super::BeginDestroy();
@@ -42,8 +48,8 @@ void UGP_EnemyHitReact::OnEventReceived(FGameplayEventData Payload)
 	
 	CacheHitDirectionVectors(Payload.Instigator);
 
-	EHitDirection HitDirection = UGP_AbilitySystemBlueprintLibrary::GetHitDirection(AvatarForwardVector, ToInstigator);
-	FName SectionName = UGP_AbilitySystemBlueprintLibrary::GetHitDirectionName(HitDirection);
+	EHitDirection HitDirection{UGP_AbilitySystemBlueprintLibrary::GetHitDirection(AvatarForwardVector, ToInstigator)};
+	FName SectionName{UGP_AbilitySystemBlueprintLibrary::GetHitDirectionName(HitDirection)};
 
 	if (bDrawDebugs)
 		GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, FString::Printf(TEXT("Hit React Event : %s"), *SectionName.ToString()));

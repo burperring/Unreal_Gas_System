@@ -37,6 +37,8 @@ AGP_PlayerCharacter::AGP_PlayerCharacter()
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	FollowCamera->bUsePawnControlRotation = false;
+
+	Tags.Add(GPTypeTags::Player);
 }
 
 UAbilitySystemComponent* AGP_PlayerCharacter::GetAbilitySystemComponent() const

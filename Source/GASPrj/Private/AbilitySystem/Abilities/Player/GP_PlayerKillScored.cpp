@@ -5,6 +5,12 @@
 #include "GameplayTags/GPTags.h"
 
 
+UGP_PlayerKillScored::UGP_PlayerKillScored()
+{
+	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
+	NetExecutionPolicy = EGameplayAbilityNetExecutionPolicy::ServerInitiated;
+}
+
 void UGP_PlayerKillScored::BeginDestroy()
 {
 	Super::BeginDestroy();

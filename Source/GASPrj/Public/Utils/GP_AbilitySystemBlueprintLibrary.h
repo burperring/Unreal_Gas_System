@@ -17,6 +17,18 @@ enum class EHitDirection : uint8
 	EHD_Max UMETA(DisplayName = "Max")
 };
 
+USTRUCT(BlueprintType)
+struct FClosestActorWithTagResult
+{
+	GENERATED_BODY()
+	
+	UPROPERTY(BlueprintReadWrite)
+	TWeakObjectPtr<AActor> Actor;
+
+	UPROPERTY(BlueprintReadWrite)
+	float Distance{0.f};
+};
+
 UCLASS()
 class GASPRJ_API UGP_AbilitySystemBlueprintLibrary : public UBlueprintFunctionLibrary
 {
@@ -28,4 +40,7 @@ public:
 
 	UFUNCTION(BlueprintPure)
 	static FName GetHitDirectionName(const EHitDirection& HitDirection);
+
+	UFUNCTION(BlueprintCallable)
+	static FClosestActorWithTagResult FindClosestActorWithTag(const UObject* WorldContextObject, const FVector& Origin, const FName& Tag);
 };
