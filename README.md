@@ -15,7 +15,7 @@ Unreal GAS System을 활용한 전투 시스템 구현
 <img width="1843" height="1044" alt="Image" src="https://github.com/user-attachments/assets/042ee1bc-08b0-4e5d-8187-c7f835ef5e7e" />
 
 ### 사용된 C++ Tag
-<img width="364" height="474" alt="Image" src="https://github.com/user-attachments/assets/7fdf68cb-84dc-4a66-9935-662849a15d7c" />
+<img width="584" height="948" alt="Image" src="https://github.com/user-attachments/assets/8300c0b1-073d-47b4-a411-ddafe0c5d822" />
 
 ### Player Attack 구현
 <img width="1107" height="367" alt="Image" src="https://github.com/user-attachments/assets/2dcefc78-fd0c-4c11-bb76-0962f50654fd" />
@@ -25,3 +25,11 @@ Unreal GAS System을 활용한 전투 시스템 구현
 
 ### Enemy Death / Respawn 구현
 <img width="1107" height="239" alt="Image" src="https://github.com/user-attachments/assets/08fa4837-0f24-4676-a113-4dc3df6a95c7" />
+
+### Gameplay Ability를 활용한 간단 NPC 구현
+### Enemy Target Search & Attack
+<img width="1100" height="224" alt="Image" src="https://github.com/user-attachments/assets/cd3125b3-b8e9-4836-8541-7f7b82a38823" />
+<img width="1383" height="210" alt="Image" src="https://github.com/user-attachments/assets/52a8656d-9356-497a-a018-623154c1fd22" />
+
+### Projectile Gameplay Effect(Player Damage)
+<img width="743" height="319" alt="Image" src="https://github.com/user-attachments/assets/be1f9317-a881-4a47-88ce-0d5a0ef63501" />
