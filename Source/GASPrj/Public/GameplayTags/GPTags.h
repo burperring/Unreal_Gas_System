@@ -8,6 +8,7 @@ namespace GPTags
 	namespace SetByCaller
 	{
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Projectile);
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(MeleeTraceHit);
 	}
 	
 	namespace GPAbilities
@@ -35,6 +36,7 @@ namespace GPTags
 		
 		namespace Player
 		{
+			UE_DECLARE_GAMEPLAY_TAG_EXTERN(HitReact);
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(Primary);
 		}
 

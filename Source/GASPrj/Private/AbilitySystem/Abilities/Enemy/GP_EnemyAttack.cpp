@@ -81,11 +81,11 @@ void UGP_EnemyAttack::SpawnProjectile()
 	SpawnParams.Owner = EnemyCharacter;
 	SpawnParams.Instigator = EnemyCharacter;
 	
-	FTransform MuzzleTransform = EnemyCharacter->GetMesh()->GetSocketTransform(MuzzleSocketName);
+	const FTransform MuzzleTransform = EnemyCharacter->GetMesh()->GetSocketTransform(MuzzleSocketName);
 
 	FVector ForwardVector = MuzzleTransform.GetRotation().GetForwardVector();
 	ForwardVector.Z = 0.f;
-	FRotator SpawnRotator = FRotationMatrix::MakeFromX(ForwardVector).Rotator();
+	const FRotator SpawnRotator = FRotationMatrix::MakeFromX(ForwardVector).Rotator();
 	
 	GetWorld()->SpawnActor<AActor>(
 		EnemyProjectile,

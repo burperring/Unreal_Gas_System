@@ -33,15 +33,16 @@ private:
 	TObjectPtr<USceneComponent> MuzzleParticleSpawnComp;
 	UPROPERTY(VisibleAnywhere, Category = "GP|Projectile")
 	TObjectPtr<USceneComponent> ImpactParticleSpawnComp;
+	
 	UPROPERTY(EditDefaultsOnly, Category = "GP|Damage")
 	TSubclassOf<UGameplayEffect> DamageEffect;
-	UPROPERTY(EditDefaultsOnly, Category = "GP|Particle")
-	UParticleSystem* MuzzleParticle;
-	UPROPERTY(EditDefaultsOnly, Category = "GP|Particle")
-	UParticleSystem* ImpactParticle;
-
 	// Gameplay Effect에서 적용되는 Attribute 값 변경은 항상 Add, Divide, Multify, Override만 존재한다.
 	// 값을 줄이기 위해서는 -(음수) 값으로 지정해야 값이 줄어든다.
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "GP|Damage", meta = (ExposeOnSpawn, ClampMax = "0.0", AllowPrivateAccess = true))
 	float Damage{-10.f};
+	
+	UPROPERTY(EditDefaultsOnly, Category = "GP|Particle")
+	UParticleSystem* MuzzleParticle;
+	UPROPERTY(EditDefaultsOnly, Category = "GP|Particle")
+	UParticleSystem* ImpactParticle;
 };

@@ -1,6 +1,7 @@
 ﻿
 #include "Character/GP_EnemyCharacter.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
 #include "AIController.h"
 #include "AbilitySystem/GP_AbilitySystemComponent.h"
@@ -29,6 +30,14 @@ UAbilitySystemComponent* AGP_EnemyCharacter::GetAbilitySystemComponent() const
 UAttributeSet* AGP_EnemyCharacter::GetAttributeSet() const
 {
 	return AttributeSet;
+}
+
+void AGP_EnemyCharacter::HandleRespawn()
+{
+	Super::HandleRespawn();
+
+	FGameplayEventData Payload;
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(this, GPTags::Events::Enemy::EndAttack, Payload);
 }
 
 void AGP_EnemyCharacter::RotateToTarget(AActor* Target)

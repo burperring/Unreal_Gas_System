@@ -113,7 +113,8 @@ void UGP_Death::ApplyDeathEffect() const
 void UGP_Death::RespawnCharacter()
 {
 	if (!GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(GPTags::Status::Death)) return;
-	
+
+	// 사망 상태 태그 제거
 	FGameplayTagContainer TagContainer;
 	TagContainer.AddTag(GPTags::Status::Death);
 	BP_RemoveGameplayEffectFromOwnerWithGrantedTags(TagContainer, 1);

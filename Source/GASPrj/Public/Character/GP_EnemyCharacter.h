@@ -20,6 +20,7 @@ public:
 
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	virtual UAttributeSet* GetAttributeSet() const override;
+	virtual void HandleRespawn();
 	void RotateToTarget(AActor* Target);
 
 	FORCEINLINE float GetEnemyAcceptanceRadius() const { return AcceptanceRadius; }
