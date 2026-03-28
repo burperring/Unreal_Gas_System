@@ -45,4 +45,6 @@ private:
 	TObjectPtr<UInputAction> SecondaryAction;
 	UPROPERTY(EditDefaultsOnly, Category = "GP|Input|Ability")
 	TObjectPtr<UInputAction> TertiaryAction;
+
+	bool IsAlive() const;
 };

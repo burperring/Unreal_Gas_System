@@ -49,12 +49,12 @@ void UGP_EnemyAttack::PlayEnemyAttackMontage()
 
 	MontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(
 		this,
-		FName(""),	// Task Instance Name (can be empty)
+		FName(""),		// Task Instance Name (can be empty)
 		UAnimMontage,
 		1.f,
 		FName("None"),	// Start Section
-		bIsMelee,	// bStopWhenAbilityEnds
-		1.0f	// AnimRootMotionTranslationScale
+		bIsMelee,		// bStopWhenAbilityEnds
+		1.0f			// AnimRootMotionTranslationScale
 	);
 
 	if (MontageTask)

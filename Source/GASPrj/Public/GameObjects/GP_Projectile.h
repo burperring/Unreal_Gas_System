@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "GP_Projectile.generated.h"
 
+
 class UGameplayEffect;
 class UProjectileMovementComponent;
 

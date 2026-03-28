@@ -71,6 +71,10 @@ void UGP_Death::PlayDeathMontage()
 		return;
 	}
 
+	AGP_BaseCharacter* Character = Cast<AGP_BaseCharacter>(GetAvatarActorFromActorInfo());
+	if (Character == nullptr) return;
+	Character->GetMesh()->GetAnimInstance()->StopAllMontages(0.f);
+
 	MontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(
 		this,
 		FName(""),	// Task Instance Name (can be empty)

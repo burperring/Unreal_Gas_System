@@ -1,12 +1,14 @@
 ﻿
 #include "GASPrj/Public/Character/GP_PlayerCharacter.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
 #include "AbilitySystem/GP_AttributeSet.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "GameplayTags/GPTags.h"
 #include "GASPrj/Public/Player/GP_PlayerState.h"
 
 

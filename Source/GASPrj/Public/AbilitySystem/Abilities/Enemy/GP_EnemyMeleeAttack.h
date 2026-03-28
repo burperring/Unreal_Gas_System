@@ -38,4 +38,6 @@ private:
 	TSubclassOf<UGameplayEffect> DamageEffect;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "GP|Damage", meta = (ExposeOnSpawn, ClampMax = "0.0", AllowPrivateAccess = true))
 	float Damage{-10.f};
+	UPROPERTY(EditDefaultsOnly, Category = "GP|Particle")
+	UParticleSystem* ImpactParticles;
 };

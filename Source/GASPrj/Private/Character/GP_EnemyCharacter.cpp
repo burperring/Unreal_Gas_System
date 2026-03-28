@@ -53,7 +53,7 @@ void AGP_EnemyCharacter::RotateToTarget(AActor* Target)
 	}
 	
 	GetWorldTimerManager().SetTimer(RotationTimerHandle, this, &AGP_EnemyCharacter::UpdateRotationToTarget, 0.01f, true);
-	GetWorldTimerManager().SetTimer(StopTimerHandle, this, &AGP_EnemyCharacter::UpdateRotationToTarget, TimerLength, false);
+	GetWorldTimerManager().SetTimer(StopTimerHandle, this, &AGP_EnemyCharacter::StopTimer, TimerLength, false);
 }
 
 void AGP_EnemyCharacter::UpdateRotationToTarget()

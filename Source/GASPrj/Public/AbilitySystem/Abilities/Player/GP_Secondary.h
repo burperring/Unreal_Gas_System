@@ -3,20 +3,20 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystem/Abilities/GP_GameplayAbility.h"
-#include "GP_Primary.generated.h"
+#include "GP_Secondary.generated.h"
 
 
 class UAbilityTask_PlayMontageAndWait;
 class UAbilityTask_WaitGameplayEvent;
 
 UCLASS()
-class GASPRJ_API UGP_Primary : public UGP_GameplayAbility
+class GASPRJ_API UGP_Secondary : public UGP_GameplayAbility
 {
 	GENERATED_BODY()
 
 public:
-	UGP_Primary();
-	
+	UGP_Secondary();
+
 	virtual void BeginDestroy() override;
 	
 protected:
@@ -41,36 +41,26 @@ protected:
 	UFUNCTION()
 	void OnEventReceived(FGameplayEventData Payload);
 	// ===================================================
-	
+
 private:
 	void ApplyBlockHitReactGE();
-	void HitBoxOerlapApply();
-	void SendHitReactEventToActors(const TArray<AActor*>& HitActors) const;
-	void ApplyDamageEventToActors(const TArray<AActor*>& HitActors) const;
-	void PlayMontageFlipFlop();
+	void PlayGuardMontage();
 
 	UFUNCTION()
 	void WaitForGameplayEvent(FGameplayTag EventTag);
+	
+	UPROPERTY(EditDefaultsOnly, Category = "GP|Effects")
+	TSubclassOf<UGameplayEffect> BlockHitReactEffect;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "GP|Montage", meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UAnimMontage> Montage_1;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "GP|Montage", meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UAnimMontage> Montage_2;
+	TObjectPtr<UAnimMontage> GuardMontage;
 	UPROPERTY()
 	TObjectPtr<UAbilityTask_PlayMontageAndWait> MontageTask;
 	UPROPERTY()
 	TObjectPtr<UAbilityTask_WaitGameplayEvent> WaitTask;
-	UPROPERTY(EditDefaultsOnly, Category = "GP|Effects")
-	TSubclassOf<UGameplayEffect> PlayerDamageEffect;
-	UPROPERTY(EditDefaultsOnly, Category = "GP|Effects")
-	TSubclassOf<UGameplayEffect> BlockHitReactEffect;
-	
-	UPROPERTY(EditDefaultsOnly, Category = "GP|Abilities")
-	float HitBoxRadius = 150.f;
-	UPROPERTY(EditDefaultsOnly, Category = "GP|Abilities")
-	float HitBoxForwardOffset = 200.f;
-	UPROPERTY(EditDefaultsOnly, Category = "GP|Abilities")
-	float HitBoxElevationOffset = 20.f;
 
-	bool bFlip = true;
+	UPROPERTY(EditDefaultsOnly, Category = "GP|Particle")
+	UParticleSystem* AbilityParticle;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "GP|Camera", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<UCameraShakeBase> ImpactCameraShake;
 };

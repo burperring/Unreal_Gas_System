@@ -28,11 +28,16 @@ protected:
 	// ===================================================
 
 private:
-	void WaitForGameplayEvent(TObjectPtr<UAbilityTask_WaitGameplayEvent>& WaitTask, FGameplayTag EventTag,
-		void (UGP_PlayerImpactCues::*CallbackFunc)(FGameplayEventData));
+	void WaitForHitReactGameplayEvent(FGameplayTag EventTag);
+	void WaitForDeathGameplayEvent(FGameplayTag EventTag);
 	
 	UPROPERTY()
 	TObjectPtr<UAbilityTask_WaitGameplayEvent> WaitHitReactTask;
 	UPROPERTY()
 	TObjectPtr<UAbilityTask_WaitGameplayEvent> WaitDeathTask;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GP|GameplayCue", meta = (AllowPrivateAccess = true))
+	FGameplayTag GameplayHitReactCueTag;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GP|GameplayCue", meta = (AllowPrivateAccess = true))
+	FGameplayTag GameplayBurstImpactTag;
 };

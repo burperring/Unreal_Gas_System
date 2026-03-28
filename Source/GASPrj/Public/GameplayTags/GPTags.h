@@ -15,6 +15,7 @@ namespace GPTags
 	{
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(ActivateOnGiven);
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Death);
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(BlockHitReact);
 		
 		namespace Player
 		{
@@ -38,6 +39,7 @@ namespace GPTags
 		{
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(HitReact);
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(Primary);
+			UE_DECLARE_GAMEPLAY_TAG_EXTERN(Secondary);
 		}
 
 		namespace Enemy

@@ -43,4 +43,11 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	static FClosestActorWithTagResult FindClosestActorWithTag(const UObject* WorldContextObject, const FVector& Origin, const FName& Tag);
+
+	UFUNCTION(BlueprintCallable)
+	static void SendPlayerHitReact(AActor* Target, UPARAM(ref) FGameplayEventData& Payload, UObject* OptionalParticleSystem = nullptr);
+
+	static TArray<AActor*> HitBoxOerlap(AActor* AvatarActor, float HitBoxRadius, float HitBoxForwardOffset = 0.f, float HitBoxElevationOffset = 0.f, bool bDrawDebugs = false);
+
+	static void DrawHitBoxOverlapDebugs(const UObject* WorldContextObject, const TArray<FOverlapResult>& OverlapResults, const FVector& HitBoxLocation, float HitBoxRadius);
 };

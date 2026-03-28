@@ -9,6 +9,7 @@
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "Character/GP_BaseCharacter.h"
 #include "GameplayTags/GPTags.h"
+#include "Utils/GP_AbilitySystemBlueprintLibrary.h"
 
 UGP_Primary::UGP_Primary()
 {
@@ -40,8 +41,8 @@ void UGP_Primary::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const
 	if (bDrawDebugs)
 		GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Cyan, TEXT("Primary Active!"));
 
+	ApplyBlockHitReactGE();
 	PlayMontageFlipFlop();
-
 	WaitForGameplayEvent(GPTags::Events::Player::Primary);
 }
 
@@ -50,8 +51,9 @@ void UGP_Primary::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGam
 {
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 
-	if (bDrawDebugs)
-		GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Cyan, TEXT("Primary End!"));
+	FGameplayTagContainer TagContainer;
+	TagContainer.AddTag(GPTags::GPAbilities::BlockHitReact);
+	BP_RemoveGameplayEffectFromOwnerWithGrantedTags(TagContainer, 1);
 }
 
 void UGP_Primary::OnMontageCompleted()
@@ -81,60 +83,32 @@ void UGP_Primary::OnEventReceived(FGameplayEventData Payload)
 	if (bDrawDebugs)
 		GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Cyan, TEXT("Gameplay Primary Event Received!"));
 
-	HitBoxOerlapTest();
+	HitBoxOerlapApply();
 }
 
-void UGP_Primary::HitBoxOerlapTest()
+void UGP_Primary::ApplyBlockHitReactGE()
 {
-	TArray<AActor*> ActorsToIgnore;
-	ActorsToIgnore.Add(GetAvatarActorFromActorInfo());
+	UAbilitySystemComponent* ASC = GetAbilitySystemComponentFromActorInfo();
+	if (!IsValid(ASC)) return;
 
-	// 아바타 액터에 대한 오버랩 감지 제거
-	FCollisionQueryParams CollisionParams;
-	CollisionParams.AddIgnoredActors(ActorsToIgnore);
+	FGameplayEffectContextHandle ContextHandle = ASC->MakeEffectContext();
+	FGameplayEffectSpecHandle SpecHandle = ASC->MakeOutgoingSpec(BlockHitReactEffect, GetAbilityLevel(), ContextHandle);
+	ASC->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+}
 
-	FCollisionResponseParams ResponseParams;
-	ResponseParams.CollisionResponse.SetAllChannels(ECR_Ignore);
-	ResponseParams.CollisionResponse.SetResponse(ECC_Pawn, ECR_Block);
-
-	TArray<FOverlapResult> OverlapResults;
-	FCollisionShape Sphere = FCollisionShape::MakeSphere(HitBoxRadius);
-
-	const FVector Forward = GetAvatarActorFromActorInfo()->GetActorForwardVector() * HitBoxForwardOffset;
-	const FVector HitBoxLocation = GetAvatarActorFromActorInfo()->GetActorLocation() + Forward + FVector(0.f, 0.f, HitBoxElevationOffset);
-	
-	GetWorld()->OverlapMultiByChannel(OverlapResults, HitBoxLocation,
-		FQuat::Identity, ECC_Visibility, Sphere, CollisionParams, ResponseParams);
-
-	TArray<AActor*> OverlapActors;
-	for (const FOverlapResult& Result : OverlapResults)
-	{
-		if (!IsValid(Result.GetActor())) continue;
-		OverlapActors.AddUnique(Result.GetActor());
-	}
+void UGP_Primary::HitBoxOerlapApply()
+{
+	TArray<AActor*> OverlapActors{};
+	OverlapActors = UGP_AbilitySystemBlueprintLibrary::HitBoxOerlap(
+		GetAvatarActorFromActorInfo(),
+		HitBoxRadius,
+		HitBoxForwardOffset,
+		HitBoxElevationOffset,
+		bDrawDebugs
+	);
 	
 	SendHitReactEventToActors(OverlapActors);
 	ApplyDamageEventToActors(OverlapActors);
-
-	if (bDrawDebugs)
-	{
-		DrawHitBoxOverlapDebugs(OverlapResults, HitBoxLocation);
-	}
-}
-
-void UGP_Primary::DrawHitBoxOverlapDebugs(const TArray<FOverlapResult>& OverlapResults, const FVector& HitBoxLocation) const
-{
-	DrawDebugSphere(GetWorld(), HitBoxLocation, HitBoxRadius, 16, FColor::White, false, 3.f);
-
-	for (const FOverlapResult& Result : OverlapResults)
-	{
-		if (IsValid(Result.GetActor()))
-		{
-			FVector DebugLocation = Result.GetActor()->GetActorLocation();
-			DebugLocation.Z += 100.f;
-			DrawDebugSphere(GetWorld(), DebugLocation, 30.f, 10, FColor::Green, false, 3.f);
-		}
-	}
 }
 
 void UGP_Primary::SendHitReactEventToActors(const TArray<AActor*>& HitActors) const

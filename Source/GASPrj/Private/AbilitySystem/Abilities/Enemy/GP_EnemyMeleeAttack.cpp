@@ -6,6 +6,8 @@
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "Character/GP_PlayerCharacter.h"
 #include "GameplayTags/GPTags.h"
+#include "Particles/ParticleSystem.h"
+#include "Utils/GP_AbilitySystemBlueprintLibrary.h"
 
 
 void UGP_EnemyMeleeAttack::BeginDestroy()
@@ -43,16 +45,19 @@ void UGP_EnemyMeleeAttack::OnEventReceived(FGameplayEventData Payload)
 		DrawDebugSphere(GetWorld(), HitResult->ImpactPoint, 25, 16, FColor::Green, false, 5.f);
 	}
 
-	AGP_PlayerCharacter* PlayerCharacter = Cast<AGP_PlayerCharacter>(HitResult->GetActor());
-	if (PlayerCharacter == nullptr) return;
-	if (!PlayerCharacter->IsAlive()) return;
+	AGP_PlayerCharacter* PC = Cast<AGP_PlayerCharacter>(HitResult->GetActor());
+	if (PC == nullptr) return;
+	if (!PC->IsAlive()) return;
 
-	UAbilitySystemComponent* ASC = PlayerCharacter->GetAbilitySystemComponent();
+	UAbilitySystemComponent* ASC = PC->GetAbilitySystemComponent();
 	if (!IsValid(ASC)) return;
 	
 	FGameplayEffectSpecHandle SpecHandle = ASC->MakeOutgoingSpec(DamageEffect, 1.f, ContextHandle);
 	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, GPTags::SetByCaller::MeleeTraceHit, Damage);
 	ASC->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+
+	// Send Player Hit React
+	UGP_AbilitySystemBlueprintLibrary::SendPlayerHitReact(PC, Payload, ImpactParticles);
 }
 
 bool UGP_EnemyMeleeAttack::IsEnemyDeath()

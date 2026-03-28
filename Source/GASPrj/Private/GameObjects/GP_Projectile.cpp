@@ -7,6 +7,7 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "GameplayTags/GPTags.h"
 #include "Kismet/GameplayStatics.h"
+#include "Utils/GP_AbilitySystemBlueprintLibrary.h"
 
 
 AGP_Projectile::AGP_Projectile()
@@ -43,13 +44,13 @@ void AGP_Projectile::NotifyActorBeginOverlap(AActor* OtherActor)
 {
 	Super::NotifyActorBeginOverlap(OtherActor);
 
-	AGP_PlayerCharacter* PlayerCharacter = Cast<AGP_PlayerCharacter>(OtherActor);
-	if (PlayerCharacter == nullptr) return;
-	if (!PlayerCharacter->IsAlive()) return;
+	AGP_PlayerCharacter* PC = Cast<AGP_PlayerCharacter>(OtherActor);
+	if (PC == nullptr) return;
+	if (!PC->IsAlive()) return;
 
-	UAbilitySystemComponent* ASC = PlayerCharacter->GetAbilitySystemComponent();
+	UAbilitySystemComponent* ASC = PC->GetAbilitySystemComponent();
 	if (!IsValid(ASC) || !HasAuthority()) return;
-
+	
 	FGameplayEffectContextHandle ContextHandle = ASC->MakeEffectContext();
 	FGameplayEffectSpecHandle SpecHandle = ASC->MakeOutgoingSpec(DamageEffect, 1.f, ContextHandle);
 	
@@ -57,6 +58,13 @@ void AGP_Projectile::NotifyActorBeginOverlap(AActor* OtherActor)
 	// 해당하는 Gameplay Effect가 SetByCaller를 통해 어떤 Tag에 대한 이벤트를 받을지 이벤트 대기
 	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, GPTags::SetByCaller::Projectile, Damage);
 	ASC->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+
+	// Send Player Hit React
+	FGameplayEventData Payload;
+	Payload.Target = PC;
+	Payload.ContextHandle = ContextHandle;
+	Payload.Instigator = GetOwner();
+	UGP_AbilitySystemBlueprintLibrary::SendPlayerHitReact(PC, Payload);
 
 	SpawnImmpactEffect();
 	Destroy();

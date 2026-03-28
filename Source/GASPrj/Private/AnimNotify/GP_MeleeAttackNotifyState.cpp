@@ -74,18 +74,18 @@ void UGP_MeleeAttackNotifyState::SendEventsToActors(USkeletalMeshComponent* Mesh
 {
 	for (const FHitResult& Hit : Hits)
 	{
-		AGP_PlayerCharacter* PlayerCharacter = Cast<AGP_PlayerCharacter>(Hit.GetActor());
-		if (PlayerCharacter == nullptr) continue;
-		if (!PlayerCharacter->IsAlive()) continue;
+		AGP_PlayerCharacter* PC = Cast<AGP_PlayerCharacter>(Hit.GetActor());
+		if (PC == nullptr) continue;
+		if (!PC->IsAlive()) continue;
 
-		UAbilitySystemComponent* ASC = PlayerCharacter->GetAbilitySystemComponent();
+		UAbilitySystemComponent* ASC = PC->GetAbilitySystemComponent();
 		if (!IsValid(ASC)) continue;
 
 		FGameplayEffectContextHandle ContextHandle = ASC->MakeEffectContext();
 		ContextHandle.AddHitResult(Hit);
 		
 		FGameplayEventData Payload;
-		Payload.Target = PlayerCharacter;
+		Payload.Target = PC;
 		Payload.Instigator = MeshComp->GetOwner();
 		Payload.ContextHandle = ContextHandle;
 		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(MeshComp->GetOwner(), GPTags::Events::Enemy::MeleeTraceHit, Payload);
