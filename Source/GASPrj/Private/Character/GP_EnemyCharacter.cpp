@@ -8,6 +8,7 @@
 #include "AbilitySystem/GP_AttributeSet.h"
 #include "GameplayTags/GPTags.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Net/UnrealNetwork.h"
 
 
 AGP_EnemyCharacter::AGP_EnemyCharacter()
@@ -20,6 +21,13 @@ AGP_EnemyCharacter::AGP_EnemyCharacter()
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
 
 	AttributeSet = CreateDefaultSubobject<UGP_AttributeSet>(TEXT("AttributeSet"));
+}
+
+void AGP_EnemyCharacter::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ThisClass, bIsBeingLaunched);
 }
 
 UAbilitySystemComponent* AGP_EnemyCharacter::GetAbilitySystemComponent() const
@@ -54,6 +62,30 @@ void AGP_EnemyCharacter::RotateToTarget(AActor* Target)
 	
 	GetWorldTimerManager().SetTimer(RotationTimerHandle, this, &AGP_EnemyCharacter::UpdateRotationToTarget, 0.01f, true);
 	GetWorldTimerManager().SetTimer(StopTimerHandle, this, &AGP_EnemyCharacter::StopTimer, TimerLength, false);
+}
+
+void AGP_EnemyCharacter::StopMovementUntilLanded()
+{
+	bIsBeingLaunched = true;
+	
+	AAIController* AIController = GetController<AAIController>();
+	if (!IsValid(AIController)) return;
+	AIController->StopMovement();
+	
+	// 캐릭터가 땅에 닿으면 발동하는 델리게이트
+	if (!LandedDelegate.IsAlreadyBound(this, &ThisClass::EnableMovementOnLanded))
+	{
+		LandedDelegate.AddDynamic(this, &ThisClass::EnableMovementOnLanded);
+	}
+}
+
+void AGP_EnemyCharacter::EnableMovementOnLanded(const FHitResult& Hit)
+{
+	bIsBeingLaunched = false;
+
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(this, GPTags::Events::Enemy::EndAttack, FGameplayEventData());
+
+	LandedDelegate.RemoveAll(this);
 }
 
 void AGP_EnemyCharacter::UpdateRotationToTarget()

@@ -45,9 +45,15 @@ protected:
 private:
 	void ApplyBlockHitReactGE();
 	void PlayGuardMontage();
+	void HitBoxOerlapApply();
 
 	UFUNCTION()
 	void WaitForGameplayEvent(FGameplayTag EventTag);
+
+	UPROPERTY(EditDefaultsOnly, Category = "GP|Damage")
+	TSubclassOf<UGameplayEffect> DamageEffect;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "GP|Damage", meta = (ExposeOnSpawn, ClampMax = "0.0", AllowPrivateAccess = true))
+	float Damage{-40.f};
 	
 	UPROPERTY(EditDefaultsOnly, Category = "GP|Effects")
 	TSubclassOf<UGameplayEffect> BlockHitReactEffect;
@@ -63,4 +69,17 @@ private:
 	UParticleSystem* AbilityParticle;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "GP|Camera", meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<UCameraShakeBase> ImpactCameraShake;
+
+	UPROPERTY(EditDefaultsOnly, Category = "GP|Abilities|HitBox")
+	float HitBoxRadius = 1500.f;
+	UPROPERTY(EditDefaultsOnly, Category = "GP|Abilities|KnockBack")
+	float InnerRadius = 500.f;
+	UPROPERTY(EditDefaultsOnly, Category = "GP|Abilities|KnockBack")
+	float LaunchForceMagnitude = 1000.f;
+	UPROPERTY(EditDefaultsOnly, Category = "GP|Abilities|KnockBack")
+	float RotationAngle = 65.f;
+
+	//FGameplayAbilitySpecHandle SecondarySpecHandle{};
+	//FGameplayAbilityActorInfo SecondaryActorInfo{};
+	//FGameplayAbilityActivationInfo SecondaryActivationInfo{};
 };

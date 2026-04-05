@@ -18,15 +18,19 @@ class GASPRJ_API AGP_EnemyCharacter : public AGP_BaseCharacter
 public:
 	AGP_EnemyCharacter();
 
+	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	virtual UAttributeSet* GetAttributeSet() const override;
 	virtual void HandleRespawn();
-	void RotateToTarget(AActor* Target);
 
+	void RotateToTarget(AActor* Target);
+	void StopMovementUntilLanded();
+	
 	FORCEINLINE float GetEnemyAcceptanceRadius() const { return AcceptanceRadius; }
 	FORCEINLINE float GetEnemyMinAttackDelay() const { return MinAttackDelay; }
 	FORCEINLINE float GetEnemyMaxAttackDelay() const { return MaxAttackDelay; }
 	FORCEINLINE float GetTimerLength() const { return TimerLength; }
+	FORCEINLINE bool GetEnemyIsLaunched() const { return bIsBeingLaunched; }
 
 protected:
 	virtual void BeginPlay() override;
@@ -35,6 +39,9 @@ protected:
 private:
 	void UpdateRotationToTarget();
 	void StopTimer();
+
+	UFUNCTION()
+	void EnableMovementOnLanded(const FHitResult& Hit);
 	
 	UPROPERTY(VisibleAnywhere, Category = "GP|AbilitySystem")
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
@@ -48,6 +55,9 @@ private:
 	float MaxAttackDelay{0.5f};
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "GP|AI", meta = (AllowPrivateAccess = "true"))
 	float TimerLength{0.2f};
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Replicated, meta = (AllowPrivateAccess = "true"))
+	bool bIsBeingLaunched = false;
 	
 	// 회전을 제어할 타이머 핸들
 	FTimerHandle RotationTimerHandle;

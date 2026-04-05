@@ -50,14 +50,10 @@ void AGP_Projectile::NotifyActorBeginOverlap(AActor* OtherActor)
 
 	UAbilitySystemComponent* ASC = PC->GetAbilitySystemComponent();
 	if (!IsValid(ASC) || !HasAuthority()) return;
-	
-	FGameplayEffectContextHandle ContextHandle = ASC->MakeEffectContext();
-	FGameplayEffectSpecHandle SpecHandle = ASC->MakeOutgoingSpec(DamageEffect, 1.f, ContextHandle);
-	
-	// 데미지 이벤트 값을 Gameplay Effect에 전송해서 Attribute를 변경하는 방식
-	// 해당하는 Gameplay Effect가 SetByCaller를 통해 어떤 Tag에 대한 이벤트를 받을지 이벤트 대기
-	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, GPTags::SetByCaller::Projectile, Damage);
-	ASC->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+
+	// Send Set By Caller Damage Event
+	FGameplayEffectContextHandle ContextHandle{
+		UGP_AbilitySystemBlueprintLibrary::SendSetByCallerEvent(ASC, DamageEffect, GPTags::SetByCaller::Projectile, Damage)};
 
 	// Send Player Hit React
 	FGameplayEventData Payload;

@@ -7,6 +7,11 @@ namespace GPTags
 	{
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Projectile, "GPTags.SetByCaller.Projectile", "Tag for Set by Caller Magnitude for Projectiles")
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(MeleeTraceHit, "GPTags.SetByCaller.MeleeTraceHit", "Tag for Set by Caller Magnitude for MeleeTraceHit")
+
+		namespace Player
+		{
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Secondary, "GPTags.SetByCaller.Player.Secondary", "Tag for Set by Caller Magnitude for Player Secondary")
+		}
 	}
 	
 	namespace GPAbilities
@@ -27,6 +32,11 @@ namespace GPTags
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(HitReact, "GPTags.GPAbilities.Enemy.HitReact", "Tag for the Enemy Hit React Ability")
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Attack, "GPTags.GPAbilities.Enemy.Attack", "Tag for the Enemy Attack Ability")
 		}
+	}
+
+	namespace Cooldown
+	{
+		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Secondary, "GPTags.Cooldown.Secondary", "Cooldown tag for Secondary Ability")
 	}
 
 	namespace Events

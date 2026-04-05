@@ -40,8 +40,6 @@ void UGP_PlayerImpactCues::OnHitReactEventReceived(FGameplayEventData Payload)
 
 void UGP_PlayerImpactCues::OnDeathEventReceived(FGameplayEventData Payload)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Yellow, TEXT("Player Death Receive"));
-
 	AGP_PlayerCharacter* PC = Cast<AGP_PlayerCharacter>(GetAvatarActorFromActorInfo());
 	if (PC == nullptr) return;
 	

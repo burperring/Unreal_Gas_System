@@ -80,7 +80,8 @@ void AGP_BaseCharacter::SetAttributeValueChange()
 	if (!IsValid(GP_AttributeSet)) return;
 	
 	// 체력 변경에 따른 사망 이벤트 추가
-	ASC->GetGameplayAttributeValueChangeDelegate(GP_AttributeSet->GetHealthAttribute()).AddUObject(this, &ThisClass::OnHealthChange);
+	ASC->GetGameplayAttributeValueChangeDelegate(
+		GP_AttributeSet->GetHealthAttribute()).AddUObject(this, &ThisClass::OnHealthChange);
 }
 
 void AGP_BaseCharacter::ActivateAbility(const FGameplayTag& AbilityTag) const

@@ -46,7 +46,7 @@ void UGP_SearchForTarget::StartSearch()
 void UGP_SearchForTarget::Search()
 {
 	const FVector SearchOrigin = GetAvatarActorFromActorInfo()->GetActorLocation();
-	FClosestActorWithTagResult ClosestActorResult = UGP_AbilitySystemBlueprintLibrary::FindClosestActorWithTag(this, SearchOrigin, GPTypeTags::Player);
+	FClosestActorWithTagResult ClosestActorResult = UGP_AbilitySystemBlueprintLibrary::FindClosestActorWithTag(GetAvatarActorFromActorInfo(), SearchOrigin, GPTypeTags::Player, OwningEnemy->GetSearchRange());
 
 	TargetBaseCharacter = Cast<AGP_BaseCharacter>(ClosestActorResult.Actor);
 	if (!TargetBaseCharacter.IsValid())
@@ -122,5 +122,6 @@ void UGP_SearchForTarget::WaitForGameplayEvent(FGameplayTag EventTag)
 
 void UGP_SearchForTarget::OnEventReceived(FGameplayEventData Payload)
 {
-	StartSearch();
+	if (OwningEnemy.IsValid() && !OwningEnemy->GetEnemyIsLaunched())
+		StartSearch();
 }

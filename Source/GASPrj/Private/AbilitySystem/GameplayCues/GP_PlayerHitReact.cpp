@@ -16,7 +16,8 @@ AGP_PlayerHitReact::AGP_PlayerHitReact()
 
 bool AGP_PlayerHitReact::OnExecute_Implementation(AActor* MyTarget, const FGameplayCueParameters& Parameters)
 {
-	if (bDrawDebugs) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, "Player Hit");
+	if (bDrawDebugs)
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, "Player Hit");
 	
 	PlayHitReactMontage(MyTarget, Parameters);
 	SpawnParticle(Parameters);

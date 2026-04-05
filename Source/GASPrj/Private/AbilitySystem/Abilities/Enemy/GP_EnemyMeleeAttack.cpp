@@ -51,10 +51,9 @@ void UGP_EnemyMeleeAttack::OnEventReceived(FGameplayEventData Payload)
 
 	UAbilitySystemComponent* ASC = PC->GetAbilitySystemComponent();
 	if (!IsValid(ASC)) return;
-	
-	FGameplayEffectSpecHandle SpecHandle = ASC->MakeOutgoingSpec(DamageEffect, 1.f, ContextHandle);
-	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, GPTags::SetByCaller::MeleeTraceHit, Damage);
-	ASC->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+
+	// Send Set By Caller Damage Event
+	UGP_AbilitySystemBlueprintLibrary::SendSetByCallerEvent(ASC, DamageEffect, GPTags::SetByCaller::MeleeTraceHit, Damage);
 
 	// Send Player Hit React
 	UGP_AbilitySystemBlueprintLibrary::SendPlayerHitReact(PC, Payload, ImpactParticles);

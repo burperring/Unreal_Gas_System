@@ -25,6 +25,7 @@ void UGP_EnemyAttack::ActivateAbility(const FGameplayAbilitySpecHandle Handle, c
 	{
 		SpawnProjectile();
 
+		// 원거리인 경우 총 발싸와 동시에 GPTags::Events::Enemy::EndAttack 전송
 		if (!bIsMelee) SendEndAttackEventTag();
 	}
 }
@@ -32,6 +33,7 @@ void UGP_EnemyAttack::ActivateAbility(const FGameplayAbilitySpecHandle Handle, c
 void UGP_EnemyAttack::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
 	const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
+	// 근거리인 경우 몽타주 실행 종료 이후 GPTags::Events::Enemy::EndAttack 전송
 	if (bIsMelee) SendEndAttackEventTag();
 	
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);

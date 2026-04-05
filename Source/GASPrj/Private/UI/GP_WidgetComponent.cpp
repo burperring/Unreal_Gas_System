@@ -81,10 +81,11 @@ void UGP_WidgetComponent::BindWidgetToAttributeChanges(UWidget* WidgetObject, co
 	if (!IsValid(AttributeWidget)) return;							// GP_AttributeWidget인지 체크 후 맞을 경우
 	if (!AttributeWidget->MatchesAttributes(Pair)) return;			// 오직 일치하는 속성에 대해서만 동작
 
-	AttributeWidget->OnAttributeChange(Pair, AttributeSet.Get()); // 초기값 세팅
+	AttributeWidget->OnAttributeChange(Pair, AttributeSet.Get(), 0.f);	// 초기값 세팅
+	AttributeWidget->SetAvatarActor(GetOwner());
 
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(Pair.Key).AddLambda([this, AttributeWidget, &Pair](const FOnAttributeChangeData& AttributeChangeData)
 	{
-		AttributeWidget->OnAttributeChange(Pair, AttributeSet.Get());	// 게임 진행 도중 변화 감지
+		AttributeWidget->OnAttributeChange(Pair, AttributeSet.Get(), AttributeChangeData.OldValue);	// 게임 진행 도중 변화 감지
 	});
 }

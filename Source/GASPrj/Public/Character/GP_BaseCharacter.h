@@ -36,6 +36,7 @@ public:
 	void ResetAttributes();
 
 	FORCEINLINE bool IsAlive() const { return bAlive; }
+	FORCEINLINE float GetSearchRange() const { return SearchRange; }
 
 	// Ability System Component가 제대로 생성되었는지 확인하기 위한 델리게이트
 	UPROPERTY(BlueprintAssignable)
@@ -59,5 +60,7 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "GP|Effects")
 	TSubclassOf<UGameplayEffect> ResetAttributesEffect;
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = true), Replicated)
-	bool bAlive = true;
+	bool bAlive{true};
+	UPROPERTY(EditAnywhere, Category = "GP|AI")
+	float SearchRange{3000.f};
 };

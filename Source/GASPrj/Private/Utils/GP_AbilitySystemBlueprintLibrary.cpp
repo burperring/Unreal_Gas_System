@@ -2,7 +2,9 @@
 #include "Utils/GP_AbilitySystemBlueprintLibrary.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
+#include "AbilitySystemComponent.h"
 #include "Character/GP_BaseCharacter.h"
+#include "Character/GP_EnemyCharacter.h"
 #include "Character/GP_PlayerCharacter.h"
 #include "Engine/OverlapResult.h"
 #include "GameplayTags/GPTags.h"
@@ -40,8 +42,8 @@ FName UGP_AbilitySystemBlueprintLibrary::GetHitDirectionName(const EHitDirection
 	}
 }
 
-FClosestActorWithTagResult UGP_AbilitySystemBlueprintLibrary::FindClosestActorWithTag(const UObject* WorldContextObject,
-	const FVector& Origin, const FName& Tag)
+FClosestActorWithTagResult UGP_AbilitySystemBlueprintLibrary::FindClosestActorWithTag(UObject* WorldContextObject,
+	const FVector& Origin, const FName& Tag, float SearchRange)
 {
 	TArray<AActor*> ActorsWithTag;
 	UGameplayStatics::GetAllActorsWithTag(WorldContextObject, Tag, ActorsWithTag);
@@ -58,6 +60,11 @@ FClosestActorWithTagResult UGP_AbilitySystemBlueprintLibrary::FindClosestActorWi
 		if (!BaseCharacter->IsAlive()) continue;
 
 		const float Distance = FVector::Dist(Origin, Actor->GetActorLocation());
+		if (AGP_BaseCharacter* SearchingCharacter = Cast<AGP_BaseCharacter>(WorldContextObject); IsValid(SearchingCharacter))
+		{
+			if (Distance > SearchingCharacter->GetSearchRange()) continue;
+		}
+		
 		if (Distance < ClosestDistance)
 		{
 			ClosestDistance = Distance;
@@ -70,6 +77,20 @@ FClosestActorWithTagResult UGP_AbilitySystemBlueprintLibrary::FindClosestActorWi
 	Result.Distance = ClosestDistance;
 
 	return Result;
+}
+
+FGameplayEffectContextHandle UGP_AbilitySystemBlueprintLibrary::SendSetByCallerEvent(UAbilitySystemComponent*& ASC,
+	const TSubclassOf<UGameplayEffect>& DamageEffect, FGameplayTag DataTag, float Damage)
+{
+	FGameplayEffectContextHandle ContextHandle = ASC->MakeEffectContext();
+	FGameplayEffectSpecHandle SpecHandle = ASC->MakeOutgoingSpec(DamageEffect, 1.f, ContextHandle);
+
+	// 데미지 이벤트 값을 Gameplay Effect에 전송해서 Attribute를 변경하는 방식
+	// 해당하는 Gameplay Effect가 SetByCaller를 통해 어떤 Tag에 대한 이벤트를 받을지 이벤트 대기
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, DataTag, Damage);
+	ASC->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+
+	return ContextHandle;
 }
 
 void UGP_AbilitySystemBlueprintLibrary::SendPlayerHitReact(AActor* Target, FGameplayEventData& Payload, UObject* OptionalParticleSystem)
@@ -143,5 +164,55 @@ void UGP_AbilitySystemBlueprintLibrary::DrawHitBoxOverlapDebugs(const UObject* W
 			DebugLocation.Z += 100.f;
 			DrawDebugSphere(World, DebugLocation, 30.f, 10, FColor::Green, false, 3.f);
 		}
+	}
+}
+
+void UGP_AbilitySystemBlueprintLibrary::ApplyKnockBack(AActor* AvatarActor, const TArray<AActor*>& HitActors,
+	float InnerRadius, float OuterRadius, float LaunchForceMagnitude, float RotationAngle, bool bDrawDebugs)
+{
+	if (!IsValid(AvatarActor)) return;
+	
+	for (AActor* HitActor : HitActors)
+	{
+		ACharacter* HitCharacter = Cast<ACharacter>(HitActor);
+		if (HitCharacter == nullptr) continue;
+
+		const FVector HitCharacterLocation = HitCharacter->GetActorLocation();
+		const FVector AvatarLocation = AvatarActor->GetActorLocation();
+
+		const FVector ToHitActor = HitCharacterLocation - AvatarLocation;
+		const float Distance = FVector::Dist(AvatarLocation, HitCharacterLocation);
+
+		float LaunchForce = 0.f;
+		if (Distance > OuterRadius) continue;
+		if (Distance < InnerRadius) LaunchForce = LaunchForceMagnitude;
+		else
+		{
+			const FVector2D FallOffRange(InnerRadius, OuterRadius);			// Input Range
+			const FVector2D LaunchForceRange(LaunchForceMagnitude, 0.f);	// Output Range
+			LaunchForce = FMath::GetMappedRangeValueClamped(FallOffRange, LaunchForceRange, Distance);
+		}
+		
+		FVector KnockBackForce = ToHitActor.GetSafeNormal();
+		KnockBackForce.Z = 0.f;
+
+		const FVector Right = KnockBackForce.RotateAngleAxis(90.f, FVector::UpVector);
+		KnockBackForce = KnockBackForce.RotateAngleAxis(-RotationAngle, Right) * LaunchForce;
+
+		if (bDrawDebugs)
+		{
+			GEngine->AddOnScreenDebugMessage(
+				-1, 3.f, FColor::Red, FString::Printf(TEXT("LaunchForce: %f"), LaunchForce));
+
+			UWorld* World = GEngine->GetWorldFromContextObject(AvatarActor, EGetWorldErrorMode::LogAndReturnNull);
+			DrawDebugDirectionalArrow(World, HitCharacterLocation, HitCharacterLocation + KnockBackForce, 100.f, FColor::Red, false, 3.f);
+		}
+
+		if (AGP_EnemyCharacter* EnemyCharacter = Cast<AGP_EnemyCharacter>(HitCharacter))
+		{
+			EnemyCharacter->StopMovementUntilLanded();
+		}
+
+		HitCharacter->LaunchCharacter(KnockBackForce, true, true);
 	}
 }

@@ -6,6 +6,12 @@
 #include "GP_AbilitySystemBlueprintLibrary.generated.h"
 
 
+struct FGameplayEventData;
+struct FGameplayEffectContextHandle;
+struct FGameplayTag;
+class UAbilitySystemComponent;
+class UGameplayEffect;
+
 UENUM(BlueprintType)
 enum class EHitDirection : uint8
 {
@@ -42,12 +48,17 @@ public:
 	static FName GetHitDirectionName(const EHitDirection& HitDirection);
 
 	UFUNCTION(BlueprintCallable)
-	static FClosestActorWithTagResult FindClosestActorWithTag(const UObject* WorldContextObject, const FVector& Origin, const FName& Tag);
+	static FClosestActorWithTagResult FindClosestActorWithTag(UObject* WorldContextObject, const FVector& Origin, const FName& Tag, float SearchRange);
 
+	UFUNCTION(BlueprintCallable)
+	static FGameplayEffectContextHandle SendSetByCallerEvent(UAbilitySystemComponent*& ASC, const TSubclassOf<UGameplayEffect>& DamageEffect, FGameplayTag DataTag, float Damage);
+	
 	UFUNCTION(BlueprintCallable)
 	static void SendPlayerHitReact(AActor* Target, UPARAM(ref) FGameplayEventData& Payload, UObject* OptionalParticleSystem = nullptr);
 
 	static TArray<AActor*> HitBoxOerlap(AActor* AvatarActor, float HitBoxRadius, float HitBoxForwardOffset = 0.f, float HitBoxElevationOffset = 0.f, bool bDrawDebugs = false);
 
 	static void DrawHitBoxOverlapDebugs(const UObject* WorldContextObject, const TArray<FOverlapResult>& OverlapResults, const FVector& HitBoxLocation, float HitBoxRadius);
+
+	static void ApplyKnockBack(AActor* AvatarActor, const TArray<AActor*>& HitActors, float InnerRadius, float OuterRadius, float LaunchForceMagnitude, float RotationAngle = 45.f, bool bDrawDebugs = false);
 };
