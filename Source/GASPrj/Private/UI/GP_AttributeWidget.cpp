@@ -47,19 +47,21 @@ void UGP_AttributeWidget::SpawnDamagedParticle(float NewValue, float OldValue)
 			NiagaraParticle,           // The Niagara System asset
 			ParticleSpawnLocation,     // Spawn location
 			FRotator::ZeroRotator,     // Spawn rotation
-			FVector(1.f),          // Scale
+			FVector(1.f),           // Scale
 			true                       // Auto-destroy when finished
 		);
 
 		FRotator CameraRotator = GetOwningPlayer()->PlayerCameraManager->GetCameraRotation();
 		FVector CameraRightVector = CameraRotator.Quaternion().GetRightVector() * fTextOffset;
 		
-		NumberSystem->AddLocalOffset(CameraRightVector);
-		
 		int32 Index = FCString::Atoi(*String);
 		if (NumberTextures.IsValidIndex(Index) && NumberTextures[Index])
-			NumberSystem->SetVariableTexture(FName("Digit"), NumberTextures[Index]);
-		
+		{
+			FName TargetName = FName(TEXT("User.Digit"));
+			NumberSystem->SetVariableTexture(TargetName, NumberTextures[Index]);
+		}
+		NumberSystem->AddLocalOffset(CameraRightVector);
+
 		fTextOffset += NumberSpacing;
 	}
 }

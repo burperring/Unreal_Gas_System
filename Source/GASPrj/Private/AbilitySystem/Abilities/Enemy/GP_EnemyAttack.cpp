@@ -5,6 +5,8 @@
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "Character/GP_EnemyCharacter.h"
 #include "GameplayTags/GPTags.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "Utils/GP_AbilitySystemBlueprintLibrary.h"
 
 
 UGP_EnemyAttack::UGP_EnemyAttack()
@@ -79,20 +81,29 @@ void UGP_EnemyAttack::SpawnProjectile()
 
 	AGP_EnemyCharacter* EnemyCharacter = Cast<AGP_EnemyCharacter>(GetAvatarActorFromActorInfo());
 	
+	FClosestActorWithTagResult ClosestActorResult = UGP_AbilitySystemBlueprintLibrary::FindClosestActorWithTag(
+		GetAvatarActorFromActorInfo(),
+		GetAvatarActorFromActorInfo()->GetActorLocation(),
+		"Player",
+		EnemyCharacter->GetEnemyAcceptanceRadius() + 100.f
+	);
+
+	if (!ClosestActorResult.Actor.IsValid()) return;
+	
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.Owner = EnemyCharacter;
 	SpawnParams.Instigator = EnemyCharacter;
 	
 	const FTransform MuzzleTransform = EnemyCharacter->GetMesh()->GetSocketTransform(MuzzleSocketName);
-
-	FVector ForwardVector = MuzzleTransform.GetRotation().GetForwardVector();
-	ForwardVector.Z = 0.f;
-	const FRotator SpawnRotator = FRotationMatrix::MakeFromX(ForwardVector).Rotator();
+	FRotator TargetRotation = UKismetMathLibrary::FindLookAtRotation(MuzzleTransform.GetLocation(), ClosestActorResult.Actor->GetActorLocation());
+	//FVector ForwardVector = MuzzleTransform.GetRotation().GetForwardVector();
+	//ForwardVector.Z = 0.f;
+	//const FRotator SpawnRotator = FRotationMatrix::MakeFromX(ForwardVector).Rotator();
 	
 	GetWorld()->SpawnActor<AActor>(
 		EnemyProjectile,
 		MuzzleTransform.GetLocation(),
-		SpawnRotator,
+		TargetRotation,
 		SpawnParams
 	);
 }
