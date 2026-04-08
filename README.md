@@ -12,7 +12,7 @@ Unreal GAS System을 활용한 전투 시스템 구현
 
 ## 🎮 주요 구현
 ### 캐릭터와 Ability System Component 구현
-<img width="1843" height="1044" alt="Image" src="https://github.com/user-attachments/assets/042ee1bc-08b0-4e5d-8187-c7f835ef5e7e" />
+<img width="1261" height="714" alt="Image" src="https://github.com/user-attachments/assets/9deabcf8-a357-446d-803f-da664bf749c0" />
 
 ### 사용된 C++ Tag
 <img width="584" height="948" alt="Image" src="https://github.com/user-attachments/assets/8300c0b1-073d-47b4-a411-ddafe0c5d822" />
