@@ -33,3 +33,9 @@ Unreal GAS System을 활용한 전투 시스템 구현
 
 ### Projectile Gameplay Effect(Player Damage)
 <img width="743" height="319" alt="Image" src="https://github.com/user-attachments/assets/be1f9317-a881-4a47-88ce-0d5a0ef63501" />
+
+### Melee Trace Hit Gameplay Effect(Player Damage)
+<img width="599" height="307" alt="Image" src="https://github.com/user-attachments/assets/46f0a6bc-e417-4bf7-9d66-9e3c91c89d0d" />
+
+### Player Impact Cue Response(Gameplay Cue)
+<img width="680" height="811" alt="Image" src="https://github.com/user-attachments/assets/589c8c98-1f3c-42d3-af40-e8448bccb623" />
