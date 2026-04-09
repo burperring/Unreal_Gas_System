@@ -32,6 +32,16 @@ void UGP_SearchForTarget::ActivateAbility(const FGameplayAbilitySpecHandle Handl
 	WaitForGameplayEvent(GPTags::Events::Enemy::EndAttack);
 }
 
+void UGP_SearchForTarget::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
+	const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
+{
+	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
+
+	if (WaitTask != nullptr) WaitTask->EndTask();
+	if (SearchDelayTask != nullptr) SearchDelayTask->EndTask();
+	if (MoveToLocationOrActorTask != nullptr) MoveToLocationOrActorTask->EndTask();
+}
+
 void UGP_SearchForTarget::StartSearch()
 {
 	if (bDrawDebugs) GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Red, FString::Printf(TEXT("GP_SearchForTarget::StartSearch")));

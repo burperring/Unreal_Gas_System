@@ -39,6 +39,8 @@ void UGP_EnemyAttack::EndAbility(const FGameplayAbilitySpecHandle Handle, const 
 	if (bIsMelee) SendEndAttackEventTag();
 	
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
+	
+	if (MontageTask != nullptr) MontageTask->EndTask();
 }
 
 void UGP_EnemyAttack::PlayEnemyAttackMontage()

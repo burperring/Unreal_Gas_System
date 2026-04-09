@@ -16,23 +16,6 @@ UGP_Primary::UGP_Primary()
 	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
 }
 
-void UGP_Primary::BeginDestroy()
-{
-	Super::BeginDestroy();
-
-	if (MontageTask != nullptr)
-	{
-		MontageTask->OnCompleted.RemoveAll(this);
-		MontageTask->OnBlendOut.RemoveAll(this);
-		MontageTask->OnInterrupted.RemoveAll(this);
-		MontageTask->OnCancelled.RemoveAll(this);
-	}
-	if (WaitTask != nullptr)
-	{
-		WaitTask->EventReceived.RemoveAll(this);
-	}
-}
-
 void UGP_Primary::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
 								  const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
@@ -54,6 +37,9 @@ void UGP_Primary::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGam
 	FGameplayTagContainer TagContainer;
 	TagContainer.AddTag(GPTags::GPAbilities::BlockHitReact);
 	BP_RemoveGameplayEffectFromOwnerWithGrantedTags(TagContainer, 1);
+
+	if (MontageTask != nullptr) MontageTask->EndTask();
+	if (WaitTask != nullptr) WaitTask->EndTask();
 }
 
 void UGP_Primary::OnMontageCompleted()

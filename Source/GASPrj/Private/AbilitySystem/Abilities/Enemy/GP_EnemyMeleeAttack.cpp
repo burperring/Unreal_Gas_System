@@ -10,15 +10,6 @@
 #include "Utils/GP_AbilitySystemBlueprintLibrary.h"
 
 
-void UGP_EnemyMeleeAttack::BeginDestroy()
-{
-	Super::BeginDestroy();
-
-	if (WaitTask != nullptr)
-	{
-		WaitTask->EventReceived.RemoveAll(this);
-	}
-}
 
 void UGP_EnemyMeleeAttack::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
                                            const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
@@ -31,6 +22,14 @@ void UGP_EnemyMeleeAttack::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 	if (IsEnemyDeath()) return;
 
 	WaitForGameplayEvent(GPTags::Events::Enemy::MeleeTraceHit);
+}
+
+void UGP_EnemyMeleeAttack::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
+	const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
+{
+	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
+
+	if (WaitTask != nullptr) WaitTask->EndTask();
 }
 
 void UGP_EnemyMeleeAttack::OnEventReceived(FGameplayEventData Payload)

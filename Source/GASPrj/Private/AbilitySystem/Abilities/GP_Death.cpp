@@ -13,19 +13,6 @@ UGP_Death::UGP_Death()
 	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
 }
 
-void UGP_Death::BeginDestroy()
-{
-	Super::BeginDestroy();
-
-	if (MontageTask != nullptr)
-	{
-		MontageTask->OnCompleted.RemoveAll(this);
-		MontageTask->OnBlendOut.RemoveAll(this);
-		MontageTask->OnInterrupted.RemoveAll(this);
-		MontageTask->OnCancelled.RemoveAll(this);
-	}
-}
-
 void UGP_Death::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
                                 const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
@@ -42,6 +29,8 @@ void UGP_Death::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGamep
 	const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
+
+	if (MontageTask != nullptr) MontageTask->EndTask();
 }
 
 void UGP_Death::OnMontageCompleted()

@@ -17,8 +17,6 @@ class GASPRJ_API UGP_Primary : public UGP_GameplayAbility
 public:
 	UGP_Primary();
 	
-	virtual void BeginDestroy() override;
-	
 protected:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
 		const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;

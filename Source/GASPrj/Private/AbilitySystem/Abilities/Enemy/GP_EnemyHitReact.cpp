@@ -15,16 +15,6 @@ UGP_EnemyHitReact::UGP_EnemyHitReact()
 	NetExecutionPolicy = EGameplayAbilityNetExecutionPolicy::ServerInitiated;
 }
 
-void UGP_EnemyHitReact::BeginDestroy()
-{
-	Super::BeginDestroy();
-
-	if (WaitTask != nullptr)
-	{
-		WaitTask->EventReceived.RemoveAll(this);
-	}
-}
-
 void UGP_EnemyHitReact::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
                                         const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
@@ -40,6 +30,8 @@ void UGP_EnemyHitReact::EndAbility(const FGameplayAbilitySpecHandle Handle, cons
 	const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
+
+	if (WaitTask != nullptr) WaitTask->EndTask();
 }
 
 void UGP_EnemyHitReact::OnEventReceived(FGameplayEventData Payload)

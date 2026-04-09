@@ -22,6 +22,15 @@ void UGP_PlayerImpactCues::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 	WaitForDeathGameplayEvent(GPTags::GPAbilities::Death);
 }
 
+void UGP_PlayerImpactCues::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
+	const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
+{
+	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
+
+	if (WaitHitReactTask != nullptr) WaitHitReactTask->EndTask();
+	if (WaitDeathTask != nullptr) WaitDeathTask->EndTask();
+}
+
 void UGP_PlayerImpactCues::OnHitReactEventReceived(FGameplayEventData Payload)
 {
 	AGP_PlayerCharacter* PC = Cast<AGP_PlayerCharacter>(GetAvatarActorFromActorInfo());
