@@ -29,8 +29,6 @@ void UGP_Death::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGamep
 	const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
-
-	if (MontageTask != nullptr) MontageTask->EndTask();
 }
 
 void UGP_Death::OnMontageCompleted()
@@ -64,29 +62,7 @@ void UGP_Death::PlayDeathMontage()
 	if (Character == nullptr) return;
 	Character->GetMesh()->GetAnimInstance()->StopAllMontages(0.f);
 
-	MontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(
-		this,
-		FName(""),	// Task Instance Name (can be empty)
-		DeathMontage,
-		1.f,
-		FName("None"),	// Start Section
-		true,	// bStopWhenAbilityEnds
-		1.0f	// AnimRootMotionTranslationScale
-	);
-
-	if (MontageTask)
-	{
-		MontageTask->OnCompleted.AddDynamic(this, &UGP_Death::OnMontageCompleted);		// 애니메이션 몽타주가 정상적으로 종료되었을 때
-		MontageTask->OnBlendOut.AddDynamic(this, &UGP_Death::OnMontageBlendOut);		// 애니메이션이 다음 애니메이션에 전환되는 타이밍 떄
-		MontageTask->OnInterrupted.AddDynamic(this, &UGP_Death::OnMontageInterrupted);	// 몽타주가 중간에 강제로 종료되었을 때
-		MontageTask->OnCancelled.AddDynamic(this, &UGP_Death::OnMontageCancelled);		// Ability 취소로 인해 몽타주가 취소된 경우
-
-		MontageTask->ReadyForActivation();
-	}
-	else
-	{
-		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
-	}
+	PlayMontageAndWait(DeathMontage);
 }
 
 void UGP_Death::ApplyDeathEffect() const

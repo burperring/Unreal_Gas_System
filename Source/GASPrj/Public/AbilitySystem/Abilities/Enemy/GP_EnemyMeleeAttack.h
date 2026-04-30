@@ -21,18 +21,11 @@ protected:
 		const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
 
 	// UAbilityTask_WaitGameplayEvent Delegate Callback
-	UFUNCTION()
-	void OnEventReceived(FGameplayEventData Payload);
+	virtual void OnEventReceived(FGameplayEventData Payload) override;
 	// ===================================================
 
 private:
 	bool IsEnemyDeath();
-	
-	UFUNCTION()
-	void WaitForGameplayEvent(FGameplayTag EventTag);
-	
-	UPROPERTY()
-	TObjectPtr<UAbilityTask_WaitGameplayEvent> WaitTask;
 
 	UPROPERTY(EditDefaultsOnly, Category = "GP|Damage")
 	TSubclassOf<UGameplayEffect> DamageEffect;

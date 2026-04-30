@@ -24,14 +24,10 @@ protected:
 		const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
 
 	// UAbilityTask_PlayMontageAndWait Delegate callbacks
-	UFUNCTION()
-	void OnMontageCompleted();
-	UFUNCTION()
-	void OnMontageBlendOut();
-	UFUNCTION()
-	void OnMontageInterrupted();
-	UFUNCTION()
-	void OnMontageCancelled();
+	virtual void OnMontageCompleted() override;
+	virtual void OnMontageBlendOut() override;
+	virtual void OnMontageInterrupted() override;
+	virtual void OnMontageCancelled() override;
 	// ===================================================
 	
 private:
@@ -42,8 +38,7 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "GP|Montage", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UAnimMontage> DeathMontage;
-	UPROPERTY()
-	TObjectPtr<UAbilityTask_PlayMontageAndWait> MontageTask;
+	
 	UPROPERTY(EditDefaultsOnly, Category = "GP|Effects")
 	TSubclassOf<UGameplayEffect> DeathEffect;		// GPTags::Status::Death
 };

@@ -24,20 +24,8 @@ protected:
 	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
 		const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
 
-	// UAbilityTask_PlayMontageAndWait Delegate callbacks
-	UFUNCTION()
-	void OnMontageCompleted();
-	UFUNCTION()
-	void OnMontageBlendOut();
-	UFUNCTION()
-	void OnMontageInterrupted();
-	UFUNCTION()
-	void OnMontageCancelled();
-	// ===================================================
-
 	// UAbilityTask_WaitGameplayEvent Delegate Callback
-	UFUNCTION()
-	void OnEventReceived(FGameplayEventData Payload);
+	virtual void OnEventReceived(FGameplayEventData Payload) override;
 	// ===================================================
 	
 private:
@@ -47,17 +35,11 @@ private:
 	void ApplyDamageEventToActors(const TArray<AActor*>& HitActors) const;
 	void PlayMontageFlipFlop();
 
-	UFUNCTION()
-	void WaitForGameplayEvent(FGameplayTag EventTag);
-
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "GP|Montage", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UAnimMontage> Montage_1;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "GP|Montage", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UAnimMontage> Montage_2;
-	UPROPERTY()
-	TObjectPtr<UAbilityTask_PlayMontageAndWait> MontageTask;
-	UPROPERTY()
-	TObjectPtr<UAbilityTask_WaitGameplayEvent> WaitTask;
+
 	UPROPERTY(EditDefaultsOnly, Category = "GP|Effects")
 	TSubclassOf<UGameplayEffect> PlayerDamageEffect;
 	UPROPERTY(EditDefaultsOnly, Category = "GP|Effects")

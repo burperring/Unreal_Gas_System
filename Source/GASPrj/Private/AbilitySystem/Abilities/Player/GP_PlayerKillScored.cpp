@@ -23,31 +23,10 @@ void UGP_PlayerKillScored::EndAbility(const FGameplayAbilitySpecHandle Handle, c
 									const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
-
-	if (WaitTask != nullptr) WaitTask->EndTask();
 }
 
 void UGP_PlayerKillScored::OnEventReceived(FGameplayEventData Payload)
 {
 	if (bDrawDebugs)
 		GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Yellow, FString::Printf(TEXT("KillScored Event: %s"), *Payload.Instigator.GetName()));
-
-	
-}
-
-void UGP_PlayerKillScored::WaitForGameplayEvent(FGameplayTag EventTag)
-{
-	WaitTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(
-		this, 
-		EventTag, 
-		/* OptionalExternalTarget (ASC to listen on) */ nullptr, 
-		/* OnlyTriggerOnce */ false, 
-		/* OnlyMatchExact */ true
-	);
-
-	if (WaitTask)
-	{
-		WaitTask->EventReceived.AddDynamic(this, &UGP_PlayerKillScored::OnEventReceived);
-		WaitTask->ReadyForActivation();
-	}
 }

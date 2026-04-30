@@ -36,9 +36,9 @@ void UGP_SearchForTarget::EndAbility(const FGameplayAbilitySpecHandle Handle, co
 	const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
-
-	if (WaitTask != nullptr) WaitTask->EndTask();
+	
 	if (SearchDelayTask != nullptr) SearchDelayTask->EndTask();
+	if (AttackDelayTask != nullptr) AttackDelayTask->EndTask();
 	if (MoveToLocationOrActorTask != nullptr) MoveToLocationOrActorTask->EndTask();
 }
 
@@ -56,22 +56,24 @@ void UGP_SearchForTarget::StartSearch()
 void UGP_SearchForTarget::Search()
 {
 	const FVector SearchOrigin = GetAvatarActorFromActorInfo()->GetActorLocation();
-	FClosestActorWithTagResult ClosestActorResult = UGP_AbilitySystemBlueprintLibrary::FindClosestActorWithTag(GetAvatarActorFromActorInfo(), SearchOrigin, GPTypeTags::Player, OwningEnemy->GetSearchRange());
+	// Player Tag를 가진 Actor중 가장 가까운 Actor 탐색
+	FClosestActorWithTagResult ClosestActorResult = UGP_AbilitySystemBlueprintLibrary::FindClosestActorWithTag(
+		GetAvatarActorFromActorInfo(), SearchOrigin, GPTypeTags::Player, OwningEnemy->GetSearchRange());
 
 	TargetBaseCharacter = Cast<AGP_BaseCharacter>(ClosestActorResult.Actor);
 	if (!TargetBaseCharacter.IsValid())
 	{
-		StartSearch();
+		StartSearch();	// 유효하지 않는 경우 재탐색
 		return;
 	}
 
 	if (TargetBaseCharacter->IsAlive())
 	{
-		MoveTargetAndAttack();
+		MoveTargetAndAttack();	// 이동 후 공격
 	}
 	else
 	{
-		StartSearch();
+		StartSearch();			// 재탐색
 	}
 }
 
@@ -81,7 +83,7 @@ void UGP_SearchForTarget::MoveTargetAndAttack()
 	if (!TargetBaseCharacter.IsValid()) return;
 	if (!OwningEnemy->IsAlive())
 	{
-		StartSearch();
+		StartSearch();	// 캐릭터 사망 시 리스폰으로 인한 재탐색
 		return;
 	}
 
@@ -101,7 +103,8 @@ void UGP_SearchForTarget::AttackTarget(TEnumAsByte<EPathFollowingResult::Type> R
 	if (!OwningEnemy.IsValid()) return;
 
 	OwningEnemy->RotateToTarget(TargetBaseCharacter.Get());
-	
+
+	// 공격에 필요한 딜레이만큼 대기
 	AttackDelayTask = UAbilityTask_WaitDelay::WaitDelay(this, OwningEnemy->GetTimerLength());
 	AttackDelayTask->OnFinish.AddDynamic(this, &UGP_SearchForTarget::Attack);
 	AttackDelayTask->Activate();
@@ -109,25 +112,9 @@ void UGP_SearchForTarget::AttackTarget(TEnumAsByte<EPathFollowingResult::Type> R
 
 void UGP_SearchForTarget::Attack()
 {
+	// 공격 Tag 전달
 	const FGameplayTag AttackTag{GPTags::GPAbilities::Enemy::Attack};
 	GetAbilitySystemComponentFromActorInfo()->TryActivateAbilitiesByTag(AttackTag.GetSingleTagContainer());
-}
-
-void UGP_SearchForTarget::WaitForGameplayEvent(FGameplayTag EventTag)
-{
-	WaitTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(
-		this, 
-		EventTag, 
-		/* OptionalExternalTarget (ASC to listen on) */ nullptr,	// 다른 액터에서 발생하는 이벤트를 수신하도록 지정할 수 있다.
-		/* OnlyTriggerOnce */ false,								// 첫 번째 이벤트가 수신된 후 종료할지(true) 아니면 여러 이벤트를 계속 수신할 지(false)
-		/* OnlyMatchExact */ true									// 정확히 일치하는 태그만 이벤트를 트리거할지(true), 아니면 중첩된 태그도 트리거할지(false)
-	);
-
-	if (WaitTask)
-	{
-		WaitTask->EventReceived.AddDynamic(this, &UGP_SearchForTarget::OnEventReceived);
-		WaitTask->ReadyForActivation();
-	}
 }
 
 void UGP_SearchForTarget::OnEventReceived(FGameplayEventData Payload)

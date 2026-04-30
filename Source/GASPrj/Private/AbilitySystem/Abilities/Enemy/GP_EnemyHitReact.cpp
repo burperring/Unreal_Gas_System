@@ -30,8 +30,6 @@ void UGP_EnemyHitReact::EndAbility(const FGameplayAbilitySpecHandle Handle, cons
 	const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
-
-	if (WaitTask != nullptr) WaitTask->EndTask();
 }
 
 void UGP_EnemyHitReact::OnEventReceived(FGameplayEventData Payload)
@@ -40,8 +38,8 @@ void UGP_EnemyHitReact::OnEventReceived(FGameplayEventData Payload)
 	
 	CacheHitDirectionVectors(Payload.Instigator);
 
-	EHitDirection HitDirection{UGP_AbilitySystemBlueprintLibrary::GetHitDirection(AvatarForwardVector, ToInstigator)};
-	FName SectionName{UGP_AbilitySystemBlueprintLibrary::GetHitDirectionName(HitDirection)};
+	EHitDirection HitDirection{UGP_AbilitySystemBlueprintLibrary::GetHitDirection(AvatarForwardVector, ToInstigator)};	// 충돌 방향에 따른
+	FName SectionName{UGP_AbilitySystemBlueprintLibrary::GetHitDirectionName(HitDirection)};							// 충돌 몽타주 섹션 설정
 
 	if (bDrawDebugs)
 		GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, FString::Printf(TEXT("Hit React Event : %s"), *SectionName.ToString()));
@@ -52,41 +50,12 @@ void UGP_EnemyHitReact::OnEventReceived(FGameplayEventData Payload)
 		return;
 	}
 
-	MontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(
-		this,
-		FName(""),	// Task Instance Name (can be empty)
-		HitMontage,
-		1.f,
-		SectionName,	// Start Section
-		true,	// bStopWhenAbilityEnds
-		1.0f	// AnimRootMotionTranslationScale
-	);
-
-	if (MontageTask)
-	{
-		MontageTask->ReadyForActivation();
-	}
-}
-
-void UGP_EnemyHitReact::WaitForGameplayEvent(FGameplayTag EventTag)
-{
-	WaitTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(
-		this, 
-		EventTag, 
-		/* OptionalExternalTarget (ASC to listen on) */ nullptr, 
-		/* OnlyTriggerOnce */ false, 
-		/* OnlyMatchExact */ true
-	);
-
-	if (WaitTask)
-	{
-		WaitTask->EventReceived.AddDynamic(this, &UGP_EnemyHitReact::OnEventReceived);
-		WaitTask->ReadyForActivation();
-	}
+	PlayMontageAndWait(HitMontage, 1.f, SectionName, true, 1.f);		// 몽타주 Task 실행
 }
 
 void UGP_EnemyHitReact::CacheHitDirectionVectors(const AActor* Instigator)
 {
+	// 현재 캐릭터와 Instigator 위치에 따른 충돌 위치 검사
 	AActor* AvatarActor = GetAvatarActorFromActorInfo();
 	if (AvatarActor == nullptr) return;
 	

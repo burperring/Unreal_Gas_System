@@ -34,8 +34,7 @@ protected:
 		const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
 
 	// UAbilityTask_WaitGameplayEvent Delegate Callback
-	UFUNCTION()
-	void OnEventReceived(FGameplayEventData Payload);
+	virtual void OnEventReceived(FGameplayEventData Payload) override;
 	// ===================================================
 	
 private:
@@ -47,16 +46,12 @@ private:
 	UFUNCTION()
 	void Attack();
 	UFUNCTION()
-	void WaitForGameplayEvent(FGameplayTag EventTag);
-	UFUNCTION()
 	void AttackTarget(TEnumAsByte<EPathFollowingResult::Type> Result, AAIController* AIController);
 	
 	TWeakObjectPtr<AGP_EnemyCharacter> OwningEnemy;
 	TWeakObjectPtr<AAIController> OwningAIController;
 	TWeakObjectPtr<AGP_BaseCharacter> TargetBaseCharacter;
 
-	UPROPERTY()
-	TObjectPtr<UAbilityTask_WaitGameplayEvent> WaitTask;
 	UPROPERTY()
 	TObjectPtr<UAbilityTask_WaitDelay> SearchDelayTask;
 	UPROPERTY()

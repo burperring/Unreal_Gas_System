@@ -23,15 +23,6 @@ protected:
 	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
 		const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
 
-	// UAbilityTask_PlayMontageAndWait Delegate callbacks
-	UFUNCTION()
-	void OnMontageCompleted();
-	UFUNCTION()
-	void OnMontageInterrupted();
-	UFUNCTION()
-	void OnMontageCancelled();
-	// ===================================================
-
 private:
 	void PlayEnemyAttackMontage();
 	void SpawnProjectile();
@@ -41,8 +32,6 @@ private:
 	TSubclassOf<AActor> EnemyProjectile;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "GP|Montage", meta = (AllowPrivateAccess = "true"))
 	TArray<TObjectPtr<UAnimMontage>> AttackMontageArray;
-	UPROPERTY()
-	TObjectPtr<UAbilityTask_PlayMontageAndWait> MontageTask;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GP|Projectile", meta = (AllowPrivateAccess = "true"))
 	FName MuzzleSocketName;
